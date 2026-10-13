@@ -1,0 +1,47 @@
+[Unit]
+Description=Prometheus exporter for ISC Kea DHCP
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /opt/kea-metrics-exporter/dist/index.js
+WorkingDirectory=/opt/kea-metrics-exporter
+EnvironmentFile=/etc/kea-metrics-exporter/exporter.env
+# The password file is handed to the service as a systemd credential, so the
+# dynamic user can read it without the file itself being readable by that
+# user. %d expands to the credentials directory.
+LoadCredential=kea-password:/etc/kea-metrics-exporter/kea-password
+Environment=KEA_PASSWORD_FILE=%d/kea-password
+Restart=on-failure
+RestartSec=5s
+
+# systemd allocates a user for the unit's lifetime; none is created ahead of
+# time.
+DynamicUser=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+# EPERM rather than a kill for a syscall outside @system-service: Node's
+# libuv probes io_uring and falls back when the probe fails with an error.
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

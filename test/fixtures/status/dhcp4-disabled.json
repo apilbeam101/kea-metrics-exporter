@@ -1,0 +1,25 @@
+[
+  {
+    "result": 0,
+    "arguments": {
+      "pid": 2817,
+      "uptime": 90210,
+      "reload": 7298,
+      "multi-threading-enabled": true,
+      "thread-pool-size": 4,
+      "packet-queue-size": 64,
+      "packet-queue-statistics": [0.0, 0.0, 0.0],
+      "extended-info-tables": false,
+      "sockets": {
+        "status": "ready"
+      },
+      "dhcp-state": {
+        "globally-disabled": true,
+        "disabled-by-user": true,
+        "disabled-by-local-command": ["ha-local"],
+        "disabled-by-remote-command": ["ha-partner"],
+        "disabled-by-db-connection": [1]
+      }
+    }
+  }
+]

@@ -1,0 +1,22 @@
+# The worked PromQL queries quoted in docs/DESIGN.md §5.2, as recording
+# rules, so the queries in the design are themselves tested. Keep each expr
+# identical to the design text.
+groups:
+  - name: design-queries
+    rules:
+      - record: design:no_active_server
+        expr: max by (relationship) (kea_ha_scopes_served) == 0
+
+      - record: design:split_brain
+        expr: |
+          count by (relationship) (
+            max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1
+          ) > 1
+
+      - record: design:stuck_outside_operational
+        expr: |
+          max_over_time(kea_ha_state{state=~"waiting|syncing|ready"}[15m]) == 1
+            and min_over_time(kea_ha_state{state=~"waiting|syncing|ready"}[15m]) == 1
+
+      - record: design:failover_imminent
+        expr: kea_ha_communication_interrupted == 1 and kea_ha_unacked_clients_left <= 2

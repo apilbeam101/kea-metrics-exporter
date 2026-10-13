@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kea-metrics-exporter
+  labels:
+    app.kubernetes.io/name: kea-metrics-exporter
+spec:
+  replicas: 1
+  # Recreate, not RollingUpdate: a second replica would poll every Kea daemon
+  # twice for no benefit. A brief scrape gap during a restart is preferable.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kea-metrics-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kea-metrics-exporter
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        # Secret volume files are root-owned: fsGroup plus mode 0440 is what
+        # lets the non-root user read the password file.
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: kea-metrics-exporter
+          # Pin a released tag, never :latest, or point this at your own
+          # registry.
+          image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: metrics
+              containerPort: 10167
+          envFrom:
+            - configMapRef:
+                name: kea-metrics-exporter-config
+          volumeMounts:
+            - name: kea-credentials
+              mountPath: /run/secrets/kea
+              readOnly: true
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          # Both probes assume a plain HTTP metrics listener. With
+          # METRICS_TLS_CERT_PATH set, add `scheme: HTTPS` to both. Kubelet's
+          # probe client cannot present a client certificate, so leave mTLS
+          # off the metrics listener when using these probes.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+      volumes:
+        - name: kea-credentials
+          secret:
+            secretName: kea-metrics-exporter-credentials
+            defaultMode: 0440

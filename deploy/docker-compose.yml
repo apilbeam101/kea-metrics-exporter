@@ -1,0 +1,28 @@
+services:
+  kea-metrics-exporter:
+    # Pin a released tag, never :latest, so `docker compose pull` cannot
+    # silently change what runs. To build from source instead, use
+    # `build: ..` (docs/INSTALL_DOCKER.md).
+    image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.0
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      KEA_PASSWORD_FILE: /run/secrets/kea-password
+    secrets:
+      - kea-password
+    ports:
+      # Keep in step with METRICS_PORT if it is changed in .env.
+      - "10167:10167"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # No healthcheck block: Compose uses the image's own HEALTHCHECK.
+
+secrets:
+  kea-password:
+    # A file containing only the Kea control-socket password. Keep it out
+    # of version control, readable by its owner only.
+    file: ../kea-password.txt

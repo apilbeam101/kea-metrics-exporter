@@ -1,0 +1,31 @@
+# OPTIONAL: only for clusters running the Prometheus Operator. Without it the
+# ServiceMonitor CRD does not exist and applying this file fails; use the
+# plain scrape_configs in docs/INSTALL_KUBERNETES.md instead.
+#
+# One endpoint per Kea daemon target: each sets ?target= and relabels
+# instance to the target name, so every daemon is its own scrape target.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kea-metrics-exporter
+  labels:
+    app.kubernetes.io/name: kea-metrics-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kea-metrics-exporter
+  endpoints:
+    - port: metrics
+      path: /metrics
+      params:
+        target: [dhcp4-a]
+      relabelings:
+        - targetLabel: instance
+          replacement: dhcp4-a
+    - port: metrics
+      path: /metrics
+      params:
+        target: [dhcp4-b]
+      relabelings:
+        - targetLabel: instance
+          replacement: dhcp4-b

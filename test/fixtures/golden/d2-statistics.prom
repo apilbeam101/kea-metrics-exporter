@@ -1,0 +1,90 @@
+# HELP kea_collector_success Per-collector outcome of the last poll cycle: 1 success, 0 failure
+# TYPE kea_collector_success gauge
+kea_collector_success{collector="statistics"} 1
+
+# HELP kea_exporter_unknown_enum_total Enumeration values reported by Kea that are outside this exporter's recognised set
+# TYPE kea_exporter_unknown_enum_total counter
+
+# HELP kea_exporter_parse_errors_total Responses or individual values that could not be parsed, by group
+# TYPE kea_exporter_parse_errors_total counter
+
+# HELP kea_d2_key_updates_sent_total DNS updates sent
+# TYPE kea_d2_key_updates_sent_total counter
+kea_d2_key_updates_sent_total{key="key1"} 6100
+kea_d2_key_updates_sent_total{key="key2"} 3940
+
+# HELP kea_d2_key_updates_signed_total DNS updates sent TSIG-signed
+# TYPE kea_d2_key_updates_signed_total counter
+kea_d2_key_updates_signed_total{key="key1"} 6100
+kea_d2_key_updates_signed_total{key="key2"} 3940
+
+# HELP kea_d2_key_updates_unsigned_total DNS updates sent unsigned
+# TYPE kea_d2_key_updates_unsigned_total counter
+kea_d2_key_updates_unsigned_total{key="key1"} 0
+kea_d2_key_updates_unsigned_total{key="key2"} 0
+
+# HELP kea_d2_key_updates_succeeded_total DNS updates that succeeded
+# TYPE kea_d2_key_updates_succeeded_total counter
+kea_d2_key_updates_succeeded_total{key="key1"} 6100
+kea_d2_key_updates_succeeded_total{key="key2"} 3940
+
+# HELP kea_d2_key_updates_timed_out_total DNS updates that timed out
+# TYPE kea_d2_key_updates_timed_out_total counter
+kea_d2_key_updates_timed_out_total{key="key1"} 6
+kea_d2_key_updates_timed_out_total{key="key2"} 6
+
+# HELP kea_d2_key_updates_failed_total DNS updates that failed
+# TYPE kea_d2_key_updates_failed_total counter
+kea_d2_key_updates_failed_total{key="key1"} 3
+kea_d2_key_updates_failed_total{key="key2"} 3
+
+# HELP kea_exporter_subnets_truncated Subnets dropped from rendering by MAX_SUBNETS, highest subnet IDs first
+# TYPE kea_exporter_subnets_truncated gauge
+kea_exporter_subnets_truncated 0
+
+# HELP kea_exporter_unknown_statistic_total Statistics returned by Kea that map to no metric, with subnet, pool and key indices templated out
+# TYPE kea_exporter_unknown_statistic_total counter
+
+# HELP kea_daemon_mismatch 1 when the configured daemon type disagrees with the statistics the target returns; absent while inconclusive
+# TYPE kea_daemon_mismatch gauge
+kea_daemon_mismatch 0
+
+# HELP kea_d2_ncr_received_total Name change requests received from the DHCP servers
+# TYPE kea_d2_ncr_received_total counter
+kea_d2_ncr_received_total 5021
+
+# HELP kea_d2_ncr_invalid_total Name change requests rejected as invalid
+# TYPE kea_d2_ncr_invalid_total counter
+kea_d2_ncr_invalid_total 2
+
+# HELP kea_d2_ncr_errors_total Name change requests that failed to be received
+# TYPE kea_d2_ncr_errors_total counter
+kea_d2_ncr_errors_total 1
+
+# HELP kea_d2_queue_full_total Name change requests dropped because the queue was full
+# TYPE kea_d2_queue_full_total counter
+kea_d2_queue_full_total 0
+
+# HELP kea_d2_updates_sent_total DNS updates sent
+# TYPE kea_d2_updates_sent_total counter
+kea_d2_updates_sent_total 10040
+
+# HELP kea_d2_updates_signed_total DNS updates sent TSIG-signed
+# TYPE kea_d2_updates_signed_total counter
+kea_d2_updates_signed_total 10040
+
+# HELP kea_d2_updates_unsigned_total DNS updates sent unsigned
+# TYPE kea_d2_updates_unsigned_total counter
+kea_d2_updates_unsigned_total 0
+
+# HELP kea_d2_updates_succeeded_total DNS updates that succeeded
+# TYPE kea_d2_updates_succeeded_total counter
+kea_d2_updates_succeeded_total 10022
+
+# HELP kea_d2_updates_timed_out_total DNS updates that timed out
+# TYPE kea_d2_updates_timed_out_total counter
+kea_d2_updates_timed_out_total 12
+
+# HELP kea_d2_updates_failed_total DNS updates that failed
+# TYPE kea_d2_updates_failed_total counter
+kea_d2_updates_failed_total 6

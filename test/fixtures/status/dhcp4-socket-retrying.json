@@ -1,0 +1,25 @@
+[
+  {
+    "result": 0,
+    "arguments": {
+      "pid": 2817,
+      "uptime": 14,
+      "reload": 14,
+      "multi-threading-enabled": false,
+      "extended-info-tables": false,
+      "sockets": {
+        "status": "retrying",
+        "errors": [
+          "the interface eth1 has no usable IPv4 addresses configured"
+        ]
+      },
+      "dhcp-state": {
+        "globally-disabled": false,
+        "disabled-by-user": false,
+        "disabled-by-local-command": [],
+        "disabled-by-remote-command": [],
+        "disabled-by-db-connection": []
+      }
+    }
+  }
+]

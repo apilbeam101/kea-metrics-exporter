@@ -1,0 +1,49 @@
+{
+  "name": "kea-metrics-exporter",
+  "version": "0.1.0",
+  "description": "Prometheus exporter for ISC Kea DHCP, including high-availability state",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "bin": {
+    "kea-metrics-exporter": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test:unit": "node --experimental-strip-types --test \"test/unit/**/*.test.ts\"",
+    "test:integration": "node --experimental-strip-types --test \"test/integration/**/*.test.ts\"",
+    "test": "npm run test:unit && npm run test:integration",
+    "check:native-addons": "node --experimental-strip-types scripts/check-no-native-addons.ts",
+    "check:pack-allowlist": "node --experimental-strip-types scripts/check-pack-allowlist.ts",
+    "check:license-compound": "node --experimental-strip-types scripts/check-license-compound.ts",
+    "check:fixtures": "node --experimental-strip-types scripts/sanitize-fixtures.ts --check test/fixtures",
+    "check:audit": "npm audit --omit=dev --audit-level=high",
+    "check": "npm run check:native-addons && npm run check:pack-allowlist && npm run check:license-compound && npm run check:fixtures && npm run check:audit",
+    "check:dco": "node --experimental-strip-types scripts/check-dco.ts",
+    "generate:metrics-doc": "node --experimental-strip-types scripts/generate-metrics-doc.ts",
+    "check:alerts": "node --experimental-strip-types scripts/check-alerts.ts",
+    "fetch:promtool": "node --experimental-strip-types scripts/fetch-promtool.ts",
+    "generate:dashboard": "node --experimental-strip-types scripts/generate-dashboard.ts",
+    "fetch:gitleaks": "node --experimental-strip-types scripts/fetch-gitleaks.ts"
+  },
+  "dependencies": {
+    "@prometheus-io/client": "^0.16.1",
+    "undici": "^8.10.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.13",
+    "@types/node": "^26.5.1",
+    "typescript": "^7.0.2"
+  }
+}

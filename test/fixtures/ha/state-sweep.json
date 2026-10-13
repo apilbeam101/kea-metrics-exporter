@@ -1,0 +1,402 @@
+[
+  {
+    "result": 0,
+    "arguments": {
+      "pid": 2817,
+      "uptime": 86523,
+      "reload": 3611,
+      "multi-threading-enabled": true,
+      "thread-pool-size": 4,
+      "packet-queue-size": 64,
+      "packet-queue-statistics": [
+        0.25,
+        0.11,
+        0.08
+      ],
+      "extended-info-tables": false,
+      "sockets": {
+        "status": "ready"
+      },
+      "dhcp-state": {
+        "globally-disabled": false,
+        "disabled-by-user": false,
+        "disabled-by-local-command": [],
+        "disabled-by-remote-command": [],
+        "disabled-by-db-connection": []
+      },
+      "high-availability": [
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "backup",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "communication-recovery",
+              "role": "standby",
+              "server-name": "server2",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "communication-recovery",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "hot-standby",
+              "role": "standby",
+              "server-name": "server3",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "hot-standby",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "in-maintenance",
+              "role": "standby",
+              "server-name": "server4",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "in-maintenance",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "load-balancing",
+              "role": "standby",
+              "server-name": "server5",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "load-balancing",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "partner-down",
+              "role": "standby",
+              "server-name": "server6",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "partner-down",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "partner-in-maintenance",
+              "role": "standby",
+              "server-name": "server7",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "partner-in-maintenance",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "passive-backup",
+              "role": "standby",
+              "server-name": "server8",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "passive-backup",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "ready",
+              "role": "standby",
+              "server-name": "server9",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [],
+              "server-name": "server1",
+              "state": "ready",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "syncing",
+              "role": "standby",
+              "server-name": "server10",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [],
+              "server-name": "server1",
+              "state": "syncing",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "terminated",
+              "role": "standby",
+              "server-name": "server11",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "terminated",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "unavailable",
+              "role": "standby",
+              "server-name": "server12",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "unavailable",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "waiting",
+              "role": "standby",
+              "server-name": "server13",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        },
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [],
+              "server-name": "server1",
+              "state": "waiting",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "backup",
+              "role": "standby",
+              "server-name": "server14",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        }
+      ]
+    }
+  }
+]

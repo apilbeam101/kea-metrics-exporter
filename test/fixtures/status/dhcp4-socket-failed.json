@@ -1,0 +1,25 @@
+[
+  {
+    "result": 0,
+    "arguments": {
+      "pid": 2817,
+      "uptime": 301,
+      "reload": 301,
+      "multi-threading-enabled": false,
+      "extended-info-tables": false,
+      "sockets": {
+        "status": "failed",
+        "errors": [
+          "failed to open socket on interface eth1, reason: failed to bind fallback socket to address 192.0.2.10, port 67"
+        ]
+      },
+      "dhcp-state": {
+        "globally-disabled": false,
+        "disabled-by-user": false,
+        "disabled-by-local-command": [],
+        "disabled-by-remote-command": [],
+        "disabled-by-db-connection": []
+      }
+    }
+  }
+]

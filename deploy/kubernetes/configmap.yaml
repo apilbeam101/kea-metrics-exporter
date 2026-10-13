@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kea-metrics-exporter-config
+  labels:
+    app.kubernetes.io/name: kea-metrics-exporter
+data:
+  # One target per Kea daemon control socket (docs/DESIGN.md §6.1).
+  KEA_TARGETS: "dhcp4-a=https://kea-a.example.com:8004,dhcp4-b=https://kea-b.example.com:8004"
+  KEA_DAEMON: "dhcp4"
+  KEA_USERNAME: "metrics"
+  # Mounted from the Secret by deployment.yaml.
+  KEA_PASSWORD_FILE: "/run/secrets/kea/password"
+  # KEA_CA_BUNDLE_PATH: "/etc/kea-exporter/tls/ca.pem"
+  # KEA_CLIENT_CERT_PATH: "/etc/kea-exporter/tls/client.pem"
+  # KEA_CLIENT_KEY_PATH: "/etc/kea-exporter/tls/client-key.pem"
+  METRICS_PORT: "10167"
+  POLL_INTERVAL_SECONDS: "30"
+  ENABLE_SUBNET_LABELS: "false"
+  LOG_FORMAT: "json"

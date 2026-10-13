@@ -1,0 +1,218 @@
+# HELP kea_collector_success Per-collector outcome of the last poll cycle: 1 success, 0 failure
+# TYPE kea_collector_success gauge
+kea_collector_success{collector="statistics"} 1
+
+# HELP kea_exporter_unknown_enum_total Enumeration values reported by Kea that are outside this exporter's recognised set
+# TYPE kea_exporter_unknown_enum_total counter
+
+# HELP kea_exporter_parse_errors_total Responses or individual values that could not be parsed, by group
+# TYPE kea_exporter_parse_errors_total counter
+
+# HELP kea_dhcp6_packets_received_total DHCPv6 packets received, by message type
+# TYPE kea_dhcp6_packets_received_total counter
+kea_dhcp6_packets_received_total{type="solicit"} 201113
+kea_dhcp6_packets_received_total{type="advertise"} 0
+kea_dhcp6_packets_received_total{type="request"} 199877
+kea_dhcp6_packets_received_total{type="reply"} 0
+kea_dhcp6_packets_received_total{type="renew"} 480220
+kea_dhcp6_packets_received_total{type="rebind"} 1022
+kea_dhcp6_packets_received_total{type="release"} 3001
+kea_dhcp6_packets_received_total{type="decline"} 2
+kea_dhcp6_packets_received_total{type="infrequest"} 36001
+kea_dhcp6_packets_received_total{type="lease-query"} 4
+kea_dhcp6_packets_received_total{type="dhcpv4-query"} 0
+kea_dhcp6_packets_received_total{type="dhcpv4-response"} 0
+kea_dhcp6_packets_received_total{type="addr-reg-inform"} 11
+kea_dhcp6_packets_received_total{type="addr-reg-reply"} 0
+kea_dhcp6_packets_received_total{type="unknown"} 1
+
+# HELP kea_dhcp6_packets_sent_total DHCPv6 packets sent, by message type
+# TYPE kea_dhcp6_packets_sent_total counter
+kea_dhcp6_packets_sent_total{type="advertise"} 201002
+kea_dhcp6_packets_sent_total{type="reply"} 717552
+kea_dhcp6_packets_sent_total{type="lease-query-reply"} 4
+kea_dhcp6_packets_sent_total{type="dhcpv4-response"} 0
+kea_dhcp6_packets_sent_total{type="addr-reg-reply"} 11
+
+# HELP kea_dhcp6_packets_dropped_total DHCPv6 packets dropped, by reason
+# TYPE kea_dhcp6_packets_dropped_total counter
+kea_dhcp6_packets_dropped_total{reason="parse-failed"} 3
+kea_dhcp6_packets_dropped_total{reason="service-disabled"} 0
+kea_dhcp6_packets_dropped_total{reason="queue-full"} 0
+kea_dhcp6_packets_dropped_total{reason="duplicate"} 3100
+kea_dhcp6_packets_dropped_total{reason="rfc-violation"} 40
+kea_dhcp6_packets_dropped_total{reason="admin-filtered"} 200
+kea_dhcp6_packets_dropped_total{reason="not-for-us"} 49
+kea_dhcp6_packets_dropped_total{reason="processing-failed"} 0
+kea_dhcp6_packets_dropped_total{reason="limit-exceeded"} 0
+
+# HELP kea_dhcp6_subnet_nas Non-temporary addresses available for allocation; can exceed 2^53, exported as the nearest float64
+# TYPE kea_dhcp6_subnet_nas gauge
+kea_dhcp6_subnet_nas{subnet_id="10"} 18446744073709552000
+
+# HELP kea_dhcp6_pool_nas Non-temporary addresses available for allocation; can exceed 2^53, exported as the nearest float64
+# TYPE kea_dhcp6_pool_nas gauge
+kea_dhcp6_pool_nas{subnet_id="10",pool_id="0"} 18446744073709552000
+
+# HELP kea_dhcp6_subnet_nas_assigned Non-temporary addresses currently assigned
+# TYPE kea_dhcp6_subnet_nas_assigned gauge
+kea_dhcp6_subnet_nas_assigned{subnet_id="10"} 512
+
+# HELP kea_dhcp6_pool_nas_assigned Non-temporary addresses currently assigned
+# TYPE kea_dhcp6_pool_nas_assigned gauge
+kea_dhcp6_pool_nas_assigned{subnet_id="10",pool_id="0"} 512
+
+# HELP kea_dhcp6_subnet_pds Delegated prefixes available for allocation
+# TYPE kea_dhcp6_subnet_pds gauge
+kea_dhcp6_subnet_pds{subnet_id="10"} 65536
+
+# HELP kea_dhcp6_pd_pool_pds Delegated prefixes available for allocation
+# TYPE kea_dhcp6_pd_pool_pds gauge
+kea_dhcp6_pd_pool_pds{subnet_id="10",pool_id="0"} 65536
+
+# HELP kea_dhcp6_subnet_pds_assigned Delegated prefixes currently assigned
+# TYPE kea_dhcp6_subnet_pds_assigned gauge
+kea_dhcp6_subnet_pds_assigned{subnet_id="10"} 64
+
+# HELP kea_dhcp6_pd_pool_pds_assigned Delegated prefixes currently assigned
+# TYPE kea_dhcp6_pd_pool_pds_assigned gauge
+kea_dhcp6_pd_pool_pds_assigned{subnet_id="10",pool_id="0"} 64
+
+# HELP kea_dhcp6_subnet_addresses_declined Addresses currently declined
+# TYPE kea_dhcp6_subnet_addresses_declined gauge
+kea_dhcp6_subnet_addresses_declined{subnet_id="10"} 1
+
+# HELP kea_dhcp6_pool_addresses_declined Addresses currently declined
+# TYPE kea_dhcp6_pool_addresses_declined gauge
+kea_dhcp6_pool_addresses_declined{subnet_id="10",pool_id="0"} 1
+
+# HELP kea_dhcp6_subnet_na_assignments_total Non-temporary address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_subnet_na_assignments_total counter
+kea_dhcp6_subnet_na_assignments_total{subnet_id="10"} 9100
+
+# HELP kea_dhcp6_pool_na_assignments_total Non-temporary address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pool_na_assignments_total counter
+kea_dhcp6_pool_na_assignments_total{subnet_id="10",pool_id="0"} 9100
+
+# HELP kea_dhcp6_subnet_pd_assignments_total Prefix delegations; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_subnet_pd_assignments_total counter
+kea_dhcp6_subnet_pd_assignments_total{subnet_id="10"} 700
+
+# HELP kea_dhcp6_pd_pool_pd_assignments_total Prefix delegations; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pd_pool_pd_assignments_total counter
+kea_dhcp6_pd_pool_pd_assignments_total{subnet_id="10",pool_id="0"} 700
+
+# HELP kea_dhcp6_subnet_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_subnet_reclaimed_leases_total counter
+kea_dhcp6_subnet_reclaimed_leases_total{subnet_id="10"} 9200
+
+# HELP kea_dhcp6_pool_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pool_reclaimed_leases_total counter
+kea_dhcp6_pool_reclaimed_leases_total{subnet_id="10",pool_id="0"} 8600
+
+# HELP kea_dhcp6_pd_pool_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pd_pool_reclaimed_leases_total counter
+kea_dhcp6_pd_pool_reclaimed_leases_total{subnet_id="10",pool_id="0"} 600
+
+# HELP kea_dhcp6_subnet_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_subnet_reclaimed_declined_addresses_total counter
+kea_dhcp6_subnet_reclaimed_declined_addresses_total{subnet_id="10"} 0
+
+# HELP kea_dhcp6_pool_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pool_reclaimed_declined_addresses_total counter
+kea_dhcp6_pool_reclaimed_declined_addresses_total{subnet_id="10",pool_id="0"} 0
+
+# HELP kea_dhcp6_subnet_allocation_failures_total Lease allocation failures, all causes
+# TYPE kea_dhcp6_subnet_allocation_failures_total counter
+kea_dhcp6_subnet_allocation_failures_total{subnet_id="10"} 2
+
+# HELP kea_dhcp6_allocation_failures_by_cause_total Lease allocation failures, by cause
+# TYPE kea_dhcp6_allocation_failures_by_cause_total counter
+kea_dhcp6_allocation_failures_by_cause_total{cause="shared-network"} 0
+kea_dhcp6_allocation_failures_by_cause_total{cause="subnet"} 2
+kea_dhcp6_allocation_failures_by_cause_total{cause="no-pools"} 0
+kea_dhcp6_allocation_failures_by_cause_total{cause="classes"} 0
+
+# HELP kea_dhcp6_subnet_allocation_failures_by_cause_total Lease allocation failures, by cause
+# TYPE kea_dhcp6_subnet_allocation_failures_by_cause_total counter
+kea_dhcp6_subnet_allocation_failures_by_cause_total{subnet_id="10",cause="shared-network"} 0
+kea_dhcp6_subnet_allocation_failures_by_cause_total{subnet_id="10",cause="subnet"} 2
+kea_dhcp6_subnet_allocation_failures_by_cause_total{subnet_id="10",cause="no-pools"} 0
+kea_dhcp6_subnet_allocation_failures_by_cause_total{subnet_id="10",cause="classes"} 0
+
+# HELP kea_dhcp6_lease_reuses_total Leases renewed by reusing an existing lease, by IA type
+# TYPE kea_dhcp6_lease_reuses_total counter
+kea_dhcp6_lease_reuses_total{ia_type="na"} 300
+kea_dhcp6_lease_reuses_total{ia_type="pd"} 40
+
+# HELP kea_dhcp6_subnet_lease_reuses_total Leases renewed by reusing an existing lease, by IA type
+# TYPE kea_dhcp6_subnet_lease_reuses_total counter
+kea_dhcp6_subnet_lease_reuses_total{subnet_id="10",ia_type="na"} 300
+kea_dhcp6_subnet_lease_reuses_total{subnet_id="10",ia_type="pd"} 40
+
+# HELP kea_dhcp6_subnet_registered Addresses currently registered by clients (address registration)
+# TYPE kea_dhcp6_subnet_registered gauge
+kea_dhcp6_subnet_registered{subnet_id="10"} 6
+
+# HELP kea_dhcp6_subnet_registrations_total Address registrations; per-subnet values reset on configuration reload
+# TYPE kea_dhcp6_subnet_registrations_total counter
+kea_dhcp6_subnet_registrations_total{subnet_id="10"} 11
+
+# HELP kea_exporter_subnets_truncated Subnets dropped from rendering by MAX_SUBNETS, highest subnet IDs first
+# TYPE kea_exporter_subnets_truncated gauge
+kea_exporter_subnets_truncated 0
+
+# HELP kea_exporter_unknown_statistic_total Statistics returned by Kea that map to no metric, with subnet, pool and key indices templated out
+# TYPE kea_exporter_unknown_statistic_total counter
+
+# HELP kea_daemon_mismatch 1 when the configured daemon type disagrees with the statistics the target returns; absent while inconclusive
+# TYPE kea_daemon_mismatch gauge
+kea_daemon_mismatch 0
+
+# HELP kea_dhcp6_packets_received_all_total DHCPv6 packets received, all types
+# TYPE kea_dhcp6_packets_received_all_total counter
+kea_dhcp6_packets_received_all_total 922011
+
+# HELP kea_dhcp6_packets_sent_all_total DHCPv6 packets sent, all types
+# TYPE kea_dhcp6_packets_sent_all_total counter
+kea_dhcp6_packets_sent_all_total 918600
+
+# HELP kea_dhcp6_packets_dropped_all_total DHCPv6 packets dropped, all reasons
+# TYPE kea_dhcp6_packets_dropped_all_total counter
+kea_dhcp6_packets_dropped_all_total 3392
+
+# HELP kea_dhcp6_nas_assigned Non-temporary addresses currently assigned
+# TYPE kea_dhcp6_nas_assigned gauge
+kea_dhcp6_nas_assigned 512
+
+# HELP kea_dhcp6_pds_assigned Delegated prefixes currently assigned
+# TYPE kea_dhcp6_pds_assigned gauge
+kea_dhcp6_pds_assigned 64
+
+# HELP kea_dhcp6_addresses_declined Addresses currently declined
+# TYPE kea_dhcp6_addresses_declined gauge
+kea_dhcp6_addresses_declined 1
+
+# HELP kea_dhcp6_na_assignments_total Non-temporary address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_na_assignments_total counter
+kea_dhcp6_na_assignments_total 9100
+
+# HELP kea_dhcp6_pd_assignments_total Prefix delegations; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_pd_assignments_total counter
+kea_dhcp6_pd_assignments_total 700
+
+# HELP kea_dhcp6_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_reclaimed_leases_total counter
+kea_dhcp6_reclaimed_leases_total 9200
+
+# HELP kea_dhcp6_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp6_reclaimed_declined_addresses_total counter
+kea_dhcp6_reclaimed_declined_addresses_total 0
+
+# HELP kea_dhcp6_allocation_failures_total Lease allocation failures, all causes
+# TYPE kea_dhcp6_allocation_failures_total counter
+kea_dhcp6_allocation_failures_total 2
+
+# HELP kea_dhcp6_registrations_total Address registrations; per-subnet values reset on configuration reload
+# TYPE kea_dhcp6_registrations_total counter
+kea_dhcp6_registrations_total 11

@@ -1,0 +1,149 @@
+# HELP kea_collector_success Per-collector outcome of the last poll cycle: 1 success, 0 failure
+# TYPE kea_collector_success gauge
+kea_collector_success{collector="version"} 1
+kea_collector_success{collector="status"} 1
+kea_collector_success{collector="ha"} 1
+
+# HELP kea_exporter_unknown_enum_total Enumeration values reported by Kea that are outside this exporter's recognised set
+# TYPE kea_exporter_unknown_enum_total counter
+
+# HELP kea_exporter_parse_errors_total Responses or individual values that could not be parsed, by group
+# TYPE kea_exporter_parse_errors_total counter
+
+# HELP kea_up 1 if and only if the last cycle's status-get reached the daemon, the credential was accepted, and it succeeded
+# TYPE kea_up gauge
+kea_up 1
+
+# HELP kea_server_version_info Always 1; the daemon's reported Kea version
+# TYPE kea_server_version_info gauge
+kea_server_version_info{version="3.2.0",daemon="dhcp4"} 1
+
+# HELP kea_service_disabled 1 when this origin holds the DHCP service disabled
+# TYPE kea_service_disabled gauge
+kea_service_disabled{origin="user"} 0
+kea_service_disabled{origin="local-command"} 0
+kea_service_disabled{origin="remote-command"} 0
+kea_service_disabled{origin="db-connection"} 0
+
+# HELP kea_control_socket_status DHCP socket status as a state set over ready, retrying and failed
+# TYPE kea_control_socket_status gauge
+kea_control_socket_status{status="ready"} 1
+kea_control_socket_status{status="retrying"} 0
+kea_control_socket_status{status="failed"} 0
+
+# HELP kea_packet_queue_depth_avg Average packet queue depth over the last 10, 100 and 1000 packets
+# TYPE kea_packet_queue_depth_avg gauge
+kea_packet_queue_depth_avg{window="10"} 0.25
+kea_packet_queue_depth_avg{window="100"} 0.11
+kea_packet_queue_depth_avg{window="1000"} 0.08
+
+# HELP kea_ha_communication_interrupted 1 when there has been no successful contact with the partner for longer than max-response-delay
+# TYPE kea_ha_communication_interrupted gauge
+kea_ha_communication_interrupted{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_partner_in_touch Whether this server reports being in touch with the partner (Kea's in-touch field)
+# TYPE kea_ha_partner_in_touch gauge
+kea_ha_partner_in_touch{relationship="server1+server2",partner="server1"} 1
+
+# HELP kea_ha_partner_age_seconds Partner contact age in seconds as reported by this server (Kea's age field)
+# TYPE kea_ha_partner_age_seconds gauge
+kea_ha_partner_age_seconds{relationship="server1+server2",partner="server1"} 4
+
+# HELP kea_ha_clock_skew_seconds Partner clock minus local clock, in seconds; signed
+# TYPE kea_ha_clock_skew_seconds gauge
+kea_ha_clock_skew_seconds{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_connecting_clients Distinct clients seen trying to reach the partner while communication is interrupted
+# TYPE kea_ha_connecting_clients gauge
+kea_ha_connecting_clients{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_unacked_clients Clients the partner has failed to answer while communication is interrupted
+# TYPE kea_ha_unacked_clients gauge
+kea_ha_unacked_clients{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_unacked_clients_left Further unanswered clients before this server moves to partner-down
+# TYPE kea_ha_unacked_clients_left gauge
+kea_ha_unacked_clients_left{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_analyzed_packets Packets examined since communication with the partner was interrupted
+# TYPE kea_ha_analyzed_packets gauge
+kea_ha_analyzed_packets{relationship="server1+server2",partner="server1"} 0
+
+# HELP kea_ha_relationship_info Always 1; the relationship's mode and each side's role. partner and partner_role are empty when there is no partner block
+# TYPE kea_ha_relationship_info gauge
+kea_ha_relationship_info{relationship="server1+server2",server="server2",partner="server1",mode="hot-standby",role="standby",partner_role="primary"} 1
+
+# HELP kea_ha_state This server's HA state, as a state set over all thirteen HA states
+# TYPE kea_ha_state gauge
+kea_ha_state{relationship="server1+server2",server="server2",state="backup"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="communication-recovery"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="hot-standby"} 1
+kea_ha_state{relationship="server1+server2",server="server2",state="in-maintenance"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="load-balancing"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="partner-down"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="partner-in-maintenance"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="passive-backup"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="ready"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="syncing"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="terminated"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="unavailable"} 0
+kea_ha_state{relationship="server1+server2",server="server2",state="waiting"} 0
+
+# HELP kea_ha_scopes_served Number of HA scopes this server is currently serving
+# TYPE kea_ha_scopes_served gauge
+kea_ha_scopes_served{relationship="server1+server2",server="server2"} 0
+
+# HELP kea_ha_scope_served 1 for each HA scope this server is currently serving
+# TYPE kea_ha_scope_served gauge
+
+# HELP kea_ha_partner_last_state The partner's HA state as last learned by this server, as a state set
+# TYPE kea_ha_partner_last_state gauge
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="backup"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="communication-recovery"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="hot-standby"} 1
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="in-maintenance"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="load-balancing"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="partner-down"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="partner-in-maintenance"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="passive-backup"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="ready"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="syncing"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="terminated"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="unavailable"} 0
+kea_ha_partner_last_state{relationship="server1+server2",partner="server1",state="waiting"} 0
+
+# HELP kea_ha_partner_last_scope 1 for each HA scope the partner was last known to serve
+# TYPE kea_ha_partner_last_scope gauge
+kea_ha_partner_last_scope{relationship="server1+server2",partner="server1",scope="server1"} 1
+
+# HELP kea_server_version_supported 0 if the daemon's reported version is below the minimum supported 3.0.0
+# TYPE kea_server_version_supported gauge
+kea_server_version_supported 1
+
+# HELP kea_start_time_seconds Daemon start time, derived from poll time minus reported uptime and rounded to whole seconds
+# TYPE kea_start_time_seconds gauge
+kea_start_time_seconds 1799913477
+
+# HELP kea_config_reload_timestamp_seconds Last configuration reload time, derived from poll time minus seconds since reload and rounded to whole seconds
+# TYPE kea_config_reload_timestamp_seconds gauge
+kea_config_reload_timestamp_seconds 1799996389
+
+# HELP kea_service_globally_disabled 1 when the DHCP service is globally disabled (Kea's globally-disabled flag)
+# TYPE kea_service_globally_disabled gauge
+kea_service_globally_disabled 0
+
+# HELP kea_multi_threading_enabled 1 when the daemon runs multi-threaded
+# TYPE kea_multi_threading_enabled gauge
+kea_multi_threading_enabled 1
+
+# HELP kea_thread_pool_size Packet-processing thread pool size; absent when multi-threading is off
+# TYPE kea_thread_pool_size gauge
+kea_thread_pool_size 4
+
+# HELP kea_packet_queue_size Configured packet queue capacity; absent when multi-threading is off
+# TYPE kea_packet_queue_size gauge
+kea_packet_queue_size 64
+
+# HELP kea_ha_relationships Number of HA relationships this server takes part in; absent when the HA hook is not loaded
+# TYPE kea_ha_relationships gauge
+kea_ha_relationships 1

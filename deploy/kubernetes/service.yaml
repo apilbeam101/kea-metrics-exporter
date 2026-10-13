@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kea-metrics-exporter
+  labels:
+    app.kubernetes.io/name: kea-metrics-exporter
+spec:
+  selector:
+    app.kubernetes.io/name: kea-metrics-exporter
+  ports:
+    - name: metrics
+      port: 10167
+      targetPort: metrics

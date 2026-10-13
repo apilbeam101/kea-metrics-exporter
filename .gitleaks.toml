@@ -1,0 +1,16 @@
+title = "kea-metrics-exporter gitleaks config"
+
+# Add an exception only once a real false positive is observed, scoped to the
+# exact file. Do not preemptively allowlist a path
+# such as test/fixtures/: that is exactly where a real secret accidentally
+# pasted into a hand-authored fixture would otherwise go undetected.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Keys generated solely to exercise TLS and client-certificate wiring in tests; issued by a throwaway test CA for localhost, never valid for or used against a real host"
+paths = [
+  '''test/support/tls/server-a-key\.pem''',
+  '''test/support/tls/server-b-key\.pem''',
+  '''test/support/tls/client-key\.pem''',
+]

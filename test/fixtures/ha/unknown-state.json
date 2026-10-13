@@ -1,0 +1,60 @@
+[
+  {
+    "result": 0,
+    "arguments": {
+      "pid": 2817,
+      "uptime": 86523,
+      "reload": 3611,
+      "multi-threading-enabled": true,
+      "thread-pool-size": 4,
+      "packet-queue-size": 64,
+      "packet-queue-statistics": [
+        0.25,
+        0.11,
+        0.08
+      ],
+      "extended-info-tables": false,
+      "sockets": {
+        "status": "ready"
+      },
+      "dhcp-state": {
+        "globally-disabled": false,
+        "disabled-by-user": false,
+        "disabled-by-local-command": [],
+        "disabled-by-remote-command": [],
+        "disabled-by-db-connection": []
+      },
+      "high-availability": [
+        {
+          "ha-mode": "hot-standby",
+          "ha-servers": {
+            "local": {
+              "role": "primary",
+              "scopes": [
+                "server1"
+              ],
+              "server-name": "server1",
+              "state": "future-state",
+              "system-time": "2026-01-15 09:30:00"
+            },
+            "remote": {
+              "age": 4,
+              "analyzed-packets": 0,
+              "clock-skew": 0,
+              "communication-interrupted": false,
+              "connecting-clients": 0,
+              "in-touch": true,
+              "last-scopes": [],
+              "last-state": "another-future-state",
+              "role": "standby",
+              "server-name": "server2",
+              "system-time": "2026-01-15 09:30:00",
+              "unacked-clients": 0,
+              "unacked-clients-left": 0
+            }
+          }
+        }
+      ]
+    }
+  }
+]

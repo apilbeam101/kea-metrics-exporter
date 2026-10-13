@@ -1,0 +1,15 @@
+[
+  {
+    "result": 0,
+    "text": "1 IPv6 subnets found",
+    "arguments": {
+      "subnets": [
+        {
+          "id": 10,
+          "subnet": "2001:db8:1::/48",
+          "shared-network-name": "network2"
+        }
+      ]
+    }
+  }
+]

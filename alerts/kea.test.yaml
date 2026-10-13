@@ -1,0 +1,420 @@
+# promtool test rules alerts/kea.test.yaml
+#
+# Every rule is shown both firing and not firing. A test that only shows a
+# rule firing passes just as well against a rule that always fires.
+rule_files:
+  - kea.yaml
+
+evaluation_interval: 1m
+
+tests:
+  - name: exporter absent, stale data and cardinality
+    interval: 1m
+    input_series:
+      - series: 'up{job="kea",instance="dhcp4-a"}'
+        values: '0x20'
+      - series: 'up{job="kea",instance="dhcp4-b"}'
+        values: '1x20'
+      - series: 'kea_exporter_cache_age_seconds{job="kea",instance="dhcp4-a"}'
+        values: '100+60x20'
+      - series: 'kea_exporter_cache_age_seconds{job="kea",instance="dhcp4-b"}'
+        values: '10x20'
+      - series: 'kea_exporter_series{job="kea",instance="dhcp4-a"}'
+        values: '25000x20'
+      - series: 'kea_exporter_series{job="kea",instance="dhcp4-b"}'
+        values: '500x20'
+      - series: 'kea_exporter_series{job="kea",instance="dhcp4-c"}'
+        values: '300x20'
+      - series: 'kea_exporter_subnets_truncated{job="kea",instance="dhcp4-a"}'
+        values: '0x20'
+      - series: 'kea_exporter_subnets_truncated{job="kea",instance="dhcp4-b"}'
+        values: '0x20'
+      - series: 'kea_exporter_subnets_truncated{job="kea",instance="dhcp4-c"}'
+        values: '3x20'
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: KeaExporterAbsent
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaExporterAbsent
+        exp_alerts:
+          - exp_labels: { severity: critical, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "The exporter cannot be scraped for Kea target dhcp4-a"
+      - eval_time: 5m
+        alertname: KeaStaleData
+        exp_alerts: []
+      - eval_time: 10m
+        alertname: KeaStaleData
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a has not been polled successfully for over 5 minutes"
+      - eval_time: 10m
+        alertname: KeaCardinalityGrowth
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: KeaCardinalityGrowth
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a renders an unexpectedly large number of series"
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-c }
+            exp_annotations:
+              summary: "Kea target dhcp4-c renders an unexpectedly large number of series"
+
+  - name: daemon health
+    interval: 1m
+    input_series:
+      - series: 'kea_up{job="kea",instance="dhcp4-a"}'
+        values: '0x20'
+      - series: 'kea_up{job="kea",instance="dhcp4-b"}'
+        values: '1x20'
+      - series: 'kea_collector_success{job="kea",instance="dhcp4-a",collector="statistics"}'
+        values: '0x20'
+      - series: 'kea_collector_success{job="kea",instance="dhcp4-a",collector="status"}'
+        values: '1x20'
+      - series: 'kea_daemon_mismatch{job="kea",instance="dhcp4-a"}'
+        values: '1x20'
+      - series: 'kea_daemon_mismatch{job="kea",instance="dhcp4-b"}'
+        values: '0x20'
+      - series: 'kea_server_version_supported{job="kea",instance="dhcp4-a"}'
+        values: '0x20'
+      - series: 'kea_server_version_supported{job="kea",instance="dhcp4-b"}'
+        values: '1x20'
+      - series: 'kea_service_globally_disabled{job="kea",instance="dhcp4-a"}'
+        values: '1x20'
+      - series: 'kea_service_globally_disabled{job="kea",instance="dhcp4-b"}'
+        values: '0x20'
+      - series: 'kea_service_globally_disabled{job="kea",instance="dhcp4-c"}'
+        values: '1 1 0x18'
+      - series: 'kea_control_socket_status{job="kea",instance="dhcp4-a",status="ready"}'
+        values: '0x20'
+      - series: 'kea_control_socket_status{job="kea",instance="dhcp4-a",status="failed"}'
+        values: '1x20'
+      - series: 'kea_control_socket_status{job="kea",instance="dhcp4-b",status="ready"}'
+        values: '1x20'
+      - series: 'kea_control_socket_status{job="kea",instance="dhcp4-b",status="failed"}'
+        values: '0x20'
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: KeaDown
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaDown
+        exp_alerts:
+          - exp_labels: { severity: critical, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea daemon dhcp4-a is unreachable or rejecting the exporter's credential"
+      - eval_time: 10m
+        alertname: KeaCollectorFailing
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: KeaCollectorFailing
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a, collector: statistics }
+            exp_annotations:
+              summary: "Collector statistics is failing for Kea target dhcp4-a"
+      - eval_time: 4m
+        alertname: KeaDaemonMismatch
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaDaemonMismatch
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a returns another daemon's statistics; check KEA_DAEMON"
+      - eval_time: 4m
+        alertname: KeaVersionUnsupported
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaVersionUnsupported
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a runs a version below 3.0"
+      - eval_time: 4m
+        alertname: KeaServiceDisabled
+        exp_alerts: []
+      # dhcp4-c was disabled for two minutes only, as during an HA sync.
+      - eval_time: 6m
+        alertname: KeaServiceDisabled
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "DHCP service is disabled on Kea target dhcp4-a"
+      - eval_time: 4m
+        alertname: KeaControlSocketNotReady
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaControlSocketNotReady
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a, status: failed }
+            exp_annotations:
+              summary: "DHCP sockets on Kea target dhcp4-a are failed"
+
+  - name: HA states
+    interval: 1m
+    input_series:
+      # server1+server2: server1 terminated; server2 alone in partner-down.
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-a",relationship="server1+server2",server="server1",state="terminated"}'
+        values: '1x80'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-b",relationship="server1+server2",server="server2",state="terminated"}'
+        values: '0x80'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-b",relationship="server1+server2",server="server2",state="partner-down"}'
+        values: '1x80'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-a",relationship="server1+server2",server="server1",state="partner-down"}'
+        values: '0x80'
+      # server3+server4: stuck in waiting, and in maintenance for over an hour.
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-c",relationship="server3+server4",server="server3",state="waiting"}'
+        values: '1x80'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-d",relationship="server3+server4",server="server4",state="syncing"}'
+        values: '1x5 0x75'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-d",relationship="server3+server4",server="server4",state="in-maintenance"}'
+        values: '0x5 1x75'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-c",relationship="server3+server4",server="server3",state="partner-in-maintenance"}'
+        values: '1x30 0x50'
+    alert_rule_test:
+      - eval_time: 0m
+        alertname: KeaHATerminated
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: KeaHATerminated
+        exp_alerts:
+          - exp_labels:
+              { severity: critical, job: kea, instance: dhcp4-a, relationship: server1+server2, server: server1, state: terminated }
+            exp_annotations:
+              summary: "HA server server1 in server1+server2 is terminated and needs a restart"
+      - eval_time: 0m
+        alertname: KeaHAPartnerDown
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: KeaHAPartnerDown
+        exp_alerts:
+          - exp_labels:
+              { severity: critical, job: kea, instance: dhcp4-b, relationship: server1+server2, server: server2, state: partner-down }
+            exp_annotations:
+              summary: "HA server server2 in server1+server2 is serving alone in partner-down"
+      - eval_time: 10m
+        alertname: KeaHANotOperational
+        exp_alerts: []
+      # server4 left syncing after five minutes, so only server3 fires.
+      - eval_time: 16m
+        alertname: KeaHANotOperational
+        exp_alerts:
+          - exp_labels:
+              { severity: warning, job: kea, instance: dhcp4-c, relationship: server3+server4, server: server3, state: waiting }
+            exp_annotations:
+              summary: "HA server server3 in server3+server4 has been in waiting for 15 minutes"
+      - eval_time: 50m
+        alertname: KeaHAMaintenance
+        exp_alerts: []
+      # server3's partner-in-maintenance ended at 30 minutes.
+      - eval_time: 70m
+        alertname: KeaHAMaintenance
+        exp_alerts:
+          - exp_labels:
+              { severity: info, job: kea, instance: dhcp4-d, relationship: server3+server4, server: server4, state: in-maintenance }
+            exp_annotations:
+              summary: "HA server server4 in server3+server4 has been in in-maintenance for an hour"
+
+  - name: HA relationships across both servers
+    interval: 1m
+    input_series:
+      # server1+server2: both sides in partner-down.
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-a",relationship="server1+server2",server="server1",state="partner-down"}'
+        values: '1x10'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-b",relationship="server1+server2",server="server2",state="partner-down"}'
+        values: '1x10'
+      # server3+server4: one side only, seen through two exporters during a
+      # migration. Not a split brain.
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-c",relationship="server3+server4",server="server3",state="partner-down"}'
+        values: '1x10'
+      - series: 'kea_ha_state{job="kea-old",instance="dhcp4-c",relationship="server3+server4",server="server3",state="partner-down"}'
+        values: '1x10'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-d",relationship="server3+server4",server="server4",state="partner-down"}'
+        values: '0x10'
+      # server1+server2 serves nothing; server3+server4 is served by server3.
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-a",relationship="server1+server2",server="server1"}'
+        values: '0x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-b",relationship="server1+server2",server="server2"}'
+        values: '0x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-c",relationship="server3+server4",server="server3"}'
+        values: '1x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-d",relationship="server3+server4",server="server4"}'
+        values: '0x10'
+    alert_rule_test:
+      - eval_time: 0m
+        alertname: KeaHASplitBrain
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: KeaHASplitBrain
+        exp_alerts:
+          - exp_labels: { severity: critical, relationship: server1+server2 }
+            exp_annotations:
+              summary: "Both sides of HA relationship server1+server2 are in partner-down"
+      - eval_time: 3m
+        alertname: KeaHANoActiveServer
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaHANoActiveServer
+        exp_alerts:
+          - exp_labels: { severity: critical, relationship: server1+server2 }
+            exp_annotations:
+              summary: "No server in HA relationship server1+server2 is serving any scope"
+
+  - name: HA partner communication
+    interval: 1m
+    input_series:
+      - series: 'kea_ha_communication_interrupted{job="kea",instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '1x10'
+      - series: 'kea_ha_unacked_clients_left{job="kea",instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '2x10'
+      - series: 'kea_ha_communication_interrupted{job="kea",instance="dhcp4-b",relationship="server3+server4",partner="server4"}'
+        values: '1x10'
+      - series: 'kea_ha_unacked_clients_left{job="kea",instance="dhcp4-b",relationship="server3+server4",partner="server4"}'
+        values: '7x10'
+      - series: 'kea_ha_communication_interrupted{job="kea",instance="dhcp4-c",relationship="server5+server6",partner="server6"}'
+        values: '0x10'
+      - series: 'kea_ha_unacked_clients_left{job="kea",instance="dhcp4-c",relationship="server5+server6",partner="server6"}'
+        values: '0x10'
+      - series: 'kea_ha_clock_skew_seconds{job="kea",instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '-45x10'
+      - series: 'kea_ha_clock_skew_seconds{job="kea",instance="dhcp4-b",relationship="server3+server4",partner="server4"}'
+        values: '10x10'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: KeaHACommunicationInterrupted
+        exp_alerts: []
+      - eval_time: 3m
+        alertname: KeaHACommunicationInterrupted
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a, relationship: server1+server2, partner: server2 }
+            exp_annotations:
+              summary: "Kea target dhcp4-a has lost contact with HA partner server2"
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-b, relationship: server3+server4, partner: server4 }
+            exp_annotations:
+              summary: "Kea target dhcp4-b has lost contact with HA partner server4"
+      # Only dhcp4-a is both interrupted and close to the unacked limit.
+      - eval_time: 1m
+        alertname: KeaHAFailoverImminent
+        exp_alerts:
+          - exp_labels: { severity: critical, job: kea, instance: dhcp4-a, relationship: server1+server2, partner: server2 }
+            exp_annotations:
+              summary: "Kea target dhcp4-a is about to move to partner-down against server2"
+      - eval_time: 4m
+        alertname: KeaHAClockSkew
+        exp_alerts: []
+      - eval_time: 6m
+        alertname: KeaHAClockSkew
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a, relationship: server1+server2, partner: server2 }
+            exp_annotations:
+              summary: "Clock skew between dhcp4-a and HA partner server2 is over 30 seconds"
+
+  - name: failover imminent stays silent without an interruption
+    interval: 1m
+    input_series:
+      - series: 'kea_ha_communication_interrupted{job="kea",instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '0x5'
+      - series: 'kea_ha_unacked_clients_left{job="kea",instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '0x5'
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: KeaHAFailoverImminent
+        exp_alerts: []
+
+  - name: leases
+    interval: 1m
+    input_series:
+      - series: 'kea_dhcp4_pool_addresses_assigned{job="kea",instance="dhcp4-a",subnet_id="1",pool_id="0"}'
+        values: '95x20'
+      - series: 'kea_dhcp4_pool_addresses{job="kea",instance="dhcp4-a",subnet_id="1",pool_id="0"}'
+        values: '100x20'
+      - series: 'kea_dhcp4_pool_addresses_assigned{job="kea",instance="dhcp4-a",subnet_id="2",pool_id="0"}'
+        values: '50x20'
+      - series: 'kea_dhcp4_pool_addresses{job="kea",instance="dhcp4-a",subnet_id="2",pool_id="0"}'
+        values: '100x20'
+      - series: 'kea_dhcp6_pd_pool_pds_assigned{job="kea",instance="dhcp6-a",subnet_id="10",pool_id="0"}'
+        values: '63x20'
+      - series: 'kea_dhcp6_pd_pool_pds{job="kea",instance="dhcp6-a",subnet_id="10",pool_id="0"}'
+        values: '64x20'
+      - series: 'kea_dhcp4_allocation_failures_total{job="kea",instance="dhcp4-a"}'
+        values: '0+5x20'
+      - series: 'kea_dhcp4_allocation_failures_total{job="kea",instance="dhcp4-b"}'
+        values: '7x20'
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: KeaPoolNearExhaustion
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: KeaPoolNearExhaustion
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a, subnet_id: "1", pool_id: "0" }
+            exp_annotations:
+              summary: "Pool 0 of subnet 1 on dhcp4-a is over 90% assigned"
+          - exp_labels: { severity: warning, job: kea, instance: dhcp6-a, subnet_id: "10", pool_id: "0" }
+            exp_annotations:
+              summary: "Pool 0 of subnet 10 on dhcp6-a is over 90% assigned"
+      - eval_time: 5m
+        alertname: KeaAllocationFailures
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: KeaAllocationFailures
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a is failing to allocate leases"
+
+  - name: packet drops
+    interval: 1m
+    input_series:
+      # dhcp4-a: 2% of traffic lost to a full queue.
+      - series: 'kea_dhcp4_packets_received_all_total{job="kea",instance="dhcp4-a"}'
+        values: '0+6000x30'
+      - series: 'kea_dhcp4_packets_dropped_total{job="kea",instance="dhcp4-a",reason="queue-full"}'
+        values: '0+120x30'
+      # dhcp4-b: many drops, but all not-for-us, which is normal in HA.
+      - series: 'kea_dhcp4_packets_received_all_total{job="kea",instance="dhcp4-b"}'
+        values: '0+6000x30'
+      - series: 'kea_dhcp4_packets_dropped_total{job="kea",instance="dhcp4-b",reason="not-for-us"}'
+        values: '0+3000x30'
+      - series: 'kea_dhcp4_packets_dropped_total{job="kea",instance="dhcp4-b",reason="queue-full"}'
+        values: '0x30'
+      # dhcp4-c: every packet dropped, but too little traffic to judge.
+      - series: 'kea_dhcp4_packets_received_all_total{job="kea",instance="dhcp4-c"}'
+        values: '0+30x30'
+      - series: 'kea_dhcp4_packets_dropped_total{job="kea",instance="dhcp4-c",reason="queue-full"}'
+        values: '0+30x30'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: KeaPacketDropRateHigh
+        exp_alerts: []
+      - eval_time: 20m
+        alertname: KeaPacketDropRateHigh
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: dhcp4-a }
+            exp_annotations:
+              summary: "Kea target dhcp4-a is dropping over 1% of packets to queue, processing or parse failures"
+
+  - name: DDNS updates
+    interval: 1m
+    input_series:
+      - series: 'kea_d2_updates_failed_total{job="kea",instance="d2-a"}'
+        values: '0+1x20'
+      - series: 'kea_d2_updates_timed_out_total{job="kea",instance="d2-a"}'
+        values: '0x20'
+      - series: 'kea_d2_updates_failed_total{job="kea",instance="d2-b"}'
+        values: '3x20'
+      - series: 'kea_d2_updates_timed_out_total{job="kea",instance="d2-b"}'
+        values: '0x20'
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: KeaDdnsUpdateFailures
+        exp_alerts: []
+      - eval_time: 16m
+        alertname: KeaDdnsUpdateFailures
+        exp_alerts:
+          - exp_labels: { severity: warning, job: kea, instance: d2-a }
+            exp_annotations:
+              summary: "DHCP-DDNS target d2-a has failing or timed-out DNS updates"

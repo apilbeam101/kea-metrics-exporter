@@ -1,0 +1,58 @@
+rule_files:
+  - design-queries.yaml
+
+evaluation_interval: 1m
+
+tests:
+  - interval: 1m
+    input_series:
+      # server1+server2: neither side serves, both in partner-down, and the
+      # partner is about to be declared down.
+      - series: 'kea_ha_scopes_served{instance="dhcp4-a",relationship="server1+server2",server="server1"}'
+        values: '0x20'
+      - series: 'kea_ha_scopes_served{instance="dhcp4-b",relationship="server1+server2",server="server2"}'
+        values: '0x20'
+      - series: 'kea_ha_state{instance="dhcp4-a",relationship="server1+server2",server="server1",state="partner-down"}'
+        values: '1x20'
+      - series: 'kea_ha_state{instance="dhcp4-b",relationship="server1+server2",server="server2",state="partner-down"}'
+        values: '1x20'
+      - series: 'kea_ha_communication_interrupted{instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '1x20'
+      - series: 'kea_ha_unacked_clients_left{instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+        values: '1x20'
+      # server3+server4: healthy, except server4 stuck in waiting throughout.
+      - series: 'kea_ha_scopes_served{instance="dhcp4-c",relationship="server3+server4",server="server3"}'
+        values: '1x20'
+      - series: 'kea_ha_scopes_served{instance="dhcp4-d",relationship="server3+server4",server="server4"}'
+        values: '0x20'
+      - series: 'kea_ha_state{instance="dhcp4-c",relationship="server3+server4",server="server3",state="partner-down"}'
+        values: '0x20'
+      - series: 'kea_ha_state{instance="dhcp4-d",relationship="server3+server4",server="server4",state="waiting"}'
+        values: '1x20'
+      - series: 'kea_ha_state{instance="dhcp4-c",relationship="server3+server4",server="server3",state="syncing"}'
+        values: '1 0x19'
+      - series: 'kea_ha_communication_interrupted{instance="dhcp4-c",relationship="server3+server4",partner="server4"}'
+        values: '1x20'
+      - series: 'kea_ha_unacked_clients_left{instance="dhcp4-c",relationship="server3+server4",partner="server4"}'
+        values: '9x20'
+    promql_expr_test:
+      - expr: design:no_active_server
+        eval_time: 16m
+        exp_samples:
+          - labels: 'design:no_active_server{relationship="server1+server2"}'
+            value: 0
+      - expr: design:split_brain
+        eval_time: 16m
+        exp_samples:
+          - labels: 'design:split_brain{relationship="server1+server2"}'
+            value: 2
+      - expr: design:stuck_outside_operational
+        eval_time: 16m
+        exp_samples:
+          - labels: 'design:stuck_outside_operational{instance="dhcp4-d",relationship="server3+server4",server="server4",state="waiting"}'
+            value: 1
+      - expr: design:failover_imminent
+        eval_time: 16m
+        exp_samples:
+          - labels: 'design:failover_imminent{instance="dhcp4-a",relationship="server1+server2",partner="server2"}'
+            value: 1

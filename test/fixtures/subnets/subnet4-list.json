@@ -1,0 +1,19 @@
+[
+  {
+    "result": 0,
+    "text": "2 IPv4 subnets found",
+    "arguments": {
+      "subnets": [
+        {
+          "id": 1,
+          "subnet": "192.0.2.0/24"
+        },
+        {
+          "id": 2,
+          "subnet": "198.51.100.0/24",
+          "shared-network-name": "network1"
+        }
+      ]
+    }
+  }
+]

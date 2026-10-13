@@ -1,0 +1,198 @@
+# HELP kea_collector_success Per-collector outcome of the last poll cycle: 1 success, 0 failure
+# TYPE kea_collector_success gauge
+kea_collector_success{collector="statistics"} 1
+
+# HELP kea_exporter_unknown_enum_total Enumeration values reported by Kea that are outside this exporter's recognised set
+# TYPE kea_exporter_unknown_enum_total counter
+
+# HELP kea_exporter_parse_errors_total Responses or individual values that could not be parsed, by group
+# TYPE kea_exporter_parse_errors_total counter
+kea_exporter_parse_errors_total{group="statistics"} 1
+
+# HELP kea_dhcp4_packets_received_total DHCPv4 packets received, by message type
+# TYPE kea_dhcp4_packets_received_total counter
+kea_dhcp4_packets_received_total{type="discover"} 402113
+kea_dhcp4_packets_received_total{type="offer"} 0
+kea_dhcp4_packets_received_total{type="request"} 1398001
+kea_dhcp4_packets_received_total{type="ack"} 0
+kea_dhcp4_packets_received_total{type="nak"} 0
+kea_dhcp4_packets_received_total{type="release"} 15022
+kea_dhcp4_packets_received_total{type="decline"} 7
+kea_dhcp4_packets_received_total{type="unknown"} 3
+
+# HELP kea_dhcp4_packets_sent_total DHCPv4 packets sent, by message type
+# TYPE kea_dhcp4_packets_sent_total counter
+kea_dhcp4_packets_sent_total{type="offer"} 401876
+kea_dhcp4_packets_sent_total{type="ack"} 1395116
+kea_dhcp4_packets_sent_total{type="nak"} 551
+kea_dhcp4_packets_sent_total{type="lease-query-response-unassigned"} 2
+kea_dhcp4_packets_sent_total{type="lease-query-response-unknown"} 1
+kea_dhcp4_packets_sent_total{type="lease-query-response-active"} 9
+
+# HELP kea_dhcp4_packets_dropped_total DHCPv4 packets dropped, by reason
+# TYPE kea_dhcp4_packets_dropped_total counter
+kea_dhcp4_packets_dropped_total{reason="parse-failed"} 12
+kea_dhcp4_packets_dropped_total{reason="service-disabled"} 0
+kea_dhcp4_packets_dropped_total{reason="queue-full"} 118
+kea_dhcp4_packets_dropped_total{reason="duplicate"} 40211
+kea_dhcp4_packets_dropped_total{reason="rfc-violation"} 85
+kea_dhcp4_packets_dropped_total{reason="admin-filtered"} 1730
+kea_dhcp4_packets_dropped_total{reason="not-for-us"} 504
+kea_dhcp4_packets_dropped_total{reason="processing-failed"} 9
+kea_dhcp4_packets_dropped_total{reason="limit-exceeded"} 0
+
+# HELP kea_dhcp4_subnet_addresses Addresses available for allocation
+# TYPE kea_dhcp4_subnet_addresses gauge
+kea_dhcp4_subnet_addresses{subnet_id="1"} 200
+kea_dhcp4_subnet_addresses{subnet_id="2"} 250
+
+# HELP kea_dhcp4_pool_addresses Addresses available for allocation
+# TYPE kea_dhcp4_pool_addresses gauge
+kea_dhcp4_pool_addresses{subnet_id="1",pool_id="0"} 200
+kea_dhcp4_pool_addresses{subnet_id="2",pool_id="0"} 150
+kea_dhcp4_pool_addresses{subnet_id="2",pool_id="1"} 100
+
+# HELP kea_dhcp4_subnet_addresses_assigned Addresses currently assigned
+# TYPE kea_dhcp4_subnet_addresses_assigned gauge
+kea_dhcp4_subnet_addresses_assigned{subnet_id="1"} 181
+kea_dhcp4_subnet_addresses_assigned{subnet_id="2"} 180
+
+# HELP kea_dhcp4_pool_addresses_assigned Addresses currently assigned
+# TYPE kea_dhcp4_pool_addresses_assigned gauge
+kea_dhcp4_pool_addresses_assigned{subnet_id="1",pool_id="0"} 181
+kea_dhcp4_pool_addresses_assigned{subnet_id="2",pool_id="0"} 120
+kea_dhcp4_pool_addresses_assigned{subnet_id="2",pool_id="1"} 60
+
+# HELP kea_dhcp4_subnet_addresses_declined Addresses currently declined
+# TYPE kea_dhcp4_subnet_addresses_declined gauge
+kea_dhcp4_subnet_addresses_declined{subnet_id="1"} 1
+kea_dhcp4_subnet_addresses_declined{subnet_id="2"} 1
+
+# HELP kea_dhcp4_pool_addresses_declined Addresses currently declined
+# TYPE kea_dhcp4_pool_addresses_declined gauge
+kea_dhcp4_pool_addresses_declined{subnet_id="1",pool_id="0"} 0
+kea_dhcp4_pool_addresses_declined{subnet_id="2",pool_id="0"} 0
+kea_dhcp4_pool_addresses_declined{subnet_id="2",pool_id="1"} 0
+
+# HELP kea_dhcp4_subnet_assignments_total Address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_subnet_assignments_total counter
+kea_dhcp4_subnet_assignments_total{subnet_id="1"} 9050
+kea_dhcp4_subnet_assignments_total{subnet_id="2"} 9000
+
+# HELP kea_dhcp4_pool_assignments_total Address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_pool_assignments_total counter
+kea_dhcp4_pool_assignments_total{subnet_id="1",pool_id="0"} 9050
+kea_dhcp4_pool_assignments_total{subnet_id="2",pool_id="0"} 6000
+kea_dhcp4_pool_assignments_total{subnet_id="2",pool_id="1"} 3000
+
+# HELP kea_dhcp4_subnet_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_subnet_reclaimed_leases_total counter
+kea_dhcp4_subnet_reclaimed_leases_total{subnet_id="1"} 8869
+kea_dhcp4_subnet_reclaimed_leases_total{subnet_id="2"} 8820
+
+# HELP kea_dhcp4_pool_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_pool_reclaimed_leases_total counter
+kea_dhcp4_pool_reclaimed_leases_total{subnet_id="1",pool_id="0"} 8869
+kea_dhcp4_pool_reclaimed_leases_total{subnet_id="2",pool_id="0"} 5880
+kea_dhcp4_pool_reclaimed_leases_total{subnet_id="2",pool_id="1"} 2940
+
+# HELP kea_dhcp4_subnet_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_subnet_reclaimed_declined_addresses_total counter
+kea_dhcp4_subnet_reclaimed_declined_addresses_total{subnet_id="1"} 2
+kea_dhcp4_subnet_reclaimed_declined_addresses_total{subnet_id="2"} 2
+
+# HELP kea_dhcp4_pool_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_pool_reclaimed_declined_addresses_total counter
+kea_dhcp4_pool_reclaimed_declined_addresses_total{subnet_id="1",pool_id="0"} 1
+kea_dhcp4_pool_reclaimed_declined_addresses_total{subnet_id="2",pool_id="0"} 1
+kea_dhcp4_pool_reclaimed_declined_addresses_total{subnet_id="2",pool_id="1"} 1
+
+# HELP kea_dhcp4_subnet_allocation_failures_total Address allocation failures, all causes
+# TYPE kea_dhcp4_subnet_allocation_failures_total counter
+kea_dhcp4_subnet_allocation_failures_total{subnet_id="1"} 7
+kea_dhcp4_subnet_allocation_failures_total{subnet_id="2"} 7
+
+# HELP kea_dhcp4_allocation_failures_by_cause_total Address allocation failures, by cause
+# TYPE kea_dhcp4_allocation_failures_by_cause_total counter
+kea_dhcp4_allocation_failures_by_cause_total{cause="shared-network"} 0
+kea_dhcp4_allocation_failures_by_cause_total{cause="subnet"} 11
+kea_dhcp4_allocation_failures_by_cause_total{cause="no-pools"} 0
+kea_dhcp4_allocation_failures_by_cause_total{cause="classes"} 3
+
+# HELP kea_dhcp4_subnet_allocation_failures_by_cause_total Address allocation failures, by cause
+# TYPE kea_dhcp4_subnet_allocation_failures_by_cause_total counter
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="1",cause="shared-network"} 0
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="1",cause="subnet"} 5
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="1",cause="no-pools"} 0
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="1",cause="classes"} 2
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="2",cause="shared-network"} 0
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="2",cause="subnet"} 5
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="2",cause="no-pools"} 0
+kea_dhcp4_subnet_allocation_failures_by_cause_total{subnet_id="2",cause="classes"} 2
+
+# HELP kea_dhcp4_subnet_lease_reuses_total Leases renewed by reusing an existing lease
+# TYPE kea_dhcp4_subnet_lease_reuses_total counter
+kea_dhcp4_subnet_lease_reuses_total{subnet_id="1"} 600
+kea_dhcp4_subnet_lease_reuses_total{subnet_id="2"} 600
+
+# HELP kea_dhcp4_subnet_reservation_conflicts_total Allocations that conflicted with a host reservation
+# TYPE kea_dhcp4_subnet_reservation_conflicts_total counter
+kea_dhcp4_subnet_reservation_conflicts_total{subnet_id="1"} 0
+kea_dhcp4_subnet_reservation_conflicts_total{subnet_id="2"} 0
+
+# HELP kea_exporter_subnets_truncated Subnets dropped from rendering by MAX_SUBNETS, highest subnet IDs first
+# TYPE kea_exporter_subnets_truncated gauge
+kea_exporter_subnets_truncated 0
+
+# HELP kea_exporter_unknown_statistic_total Statistics returned by Kea that map to no metric, with subnet, pool and key indices templated out
+# TYPE kea_exporter_unknown_statistic_total counter
+kea_exporter_unknown_statistic_total{name="pkt4-hypothetical-new-counter"} 1
+kea_exporter_unknown_statistic_total{name="subnet[*].pool[*].future-stat"} 1
+
+# HELP kea_daemon_mismatch 1 when the configured daemon type disagrees with the statistics the target returns; absent while inconclusive
+# TYPE kea_daemon_mismatch gauge
+kea_daemon_mismatch 0
+
+# HELP kea_dhcp4_packets_received_all_total DHCPv4 packets received, all types
+# TYPE kea_dhcp4_packets_received_all_total counter
+kea_dhcp4_packets_received_all_total 1840212
+
+# HELP kea_dhcp4_packets_sent_all_total DHCPv4 packets sent, all types
+# TYPE kea_dhcp4_packets_sent_all_total counter
+kea_dhcp4_packets_sent_all_total 1797543
+
+# HELP kea_dhcp4_packets_dropped_all_total DHCPv4 packets dropped, all reasons
+# TYPE kea_dhcp4_packets_dropped_all_total counter
+kea_dhcp4_packets_dropped_all_total 42669
+
+# HELP kea_dhcp4_addresses_assigned Addresses currently assigned
+# TYPE kea_dhcp4_addresses_assigned gauge
+kea_dhcp4_addresses_assigned 361
+
+# HELP kea_dhcp4_addresses_declined Addresses currently declined
+# TYPE kea_dhcp4_addresses_declined gauge
+kea_dhcp4_addresses_declined 2
+
+# HELP kea_dhcp4_assignments_total Address assignments; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_assignments_total counter
+kea_dhcp4_assignments_total 18823
+
+# HELP kea_dhcp4_reclaimed_leases_total Expired leases reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_reclaimed_leases_total counter
+kea_dhcp4_reclaimed_leases_total 18461
+
+# HELP kea_dhcp4_reclaimed_declined_addresses_total Declined addresses reclaimed; per-subnet and per-pool values reset on configuration reload
+# TYPE kea_dhcp4_reclaimed_declined_addresses_total counter
+kea_dhcp4_reclaimed_declined_addresses_total 5
+
+# HELP kea_dhcp4_allocation_failures_total Address allocation failures, all causes
+# TYPE kea_dhcp4_allocation_failures_total counter
+kea_dhcp4_allocation_failures_total 14
+
+# HELP kea_dhcp4_lease_reuses_total Leases renewed by reusing an existing lease
+# TYPE kea_dhcp4_lease_reuses_total counter
+kea_dhcp4_lease_reuses_total 1200
+
+# HELP kea_dhcp4_reservation_conflicts_total Allocations that conflicted with a host reservation
+# TYPE kea_dhcp4_reservation_conflicts_total counter
+kea_dhcp4_reservation_conflicts_total 1

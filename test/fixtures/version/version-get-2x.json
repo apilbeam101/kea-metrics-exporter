@@ -1,0 +1,9 @@
+[
+  {
+    "result": 0,
+    "text": "2.6.3",
+    "arguments": {
+      "extended": "2.6.3 (tarball)\nlinked with:\nlog4cplus 2.1.1\nOpenSSL 3.0.13"
+    }
+  }
+]

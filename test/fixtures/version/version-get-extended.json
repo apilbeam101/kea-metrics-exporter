@@ -1,0 +1,9 @@
+[
+  {
+    "result": 0,
+    "text": "3.2.0",
+    "arguments": {
+      "extended": "3.2.0 (tarball)\nlinked with:\nlog4cplus 2.1.1\nOpenSSL 3.0.13\ndatabase:\nMemfile backend 3.0"
+    }
+  }
+]

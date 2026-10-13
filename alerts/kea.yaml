@@ -1,0 +1,215 @@
+# Alert rules for kea-metrics-exporter (docs/DESIGN.md §7.2). Every rule is
+# tested in both directions in kea.test.yaml.
+groups:
+  - name: kea-exporter
+    rules:
+      # The only rule that still fires when the exporter process is gone,
+      # since every kea_* series then stops existing.
+      - alert: KeaExporterAbsent
+        expr: up{job="kea"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "The exporter cannot be scraped for Kea target {{ $labels.instance }}"
+
+      - alert: KeaStaleData
+        expr: kea_exporter_cache_age_seconds > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} has not been polled successfully for over 5 minutes"
+
+      - alert: KeaCardinalityGrowth
+        expr: kea_exporter_series > 20000 or kea_exporter_subnets_truncated > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} renders an unexpectedly large number of series"
+
+  - name: kea-daemon
+    rules:
+      - alert: KeaDown
+        expr: kea_up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kea daemon {{ $labels.instance }} is unreachable or rejecting the exporter's credential"
+
+      - alert: KeaCollectorFailing
+        expr: kea_collector_success == 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Collector {{ $labels.collector }} is failing for Kea target {{ $labels.instance }}"
+
+      - alert: KeaDaemonMismatch
+        expr: kea_daemon_mismatch == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} returns another daemon's statistics; check KEA_DAEMON"
+
+      - alert: KeaVersionUnsupported
+        expr: kea_server_version_supported == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} runs a version below 3.0"
+
+      # Kea disables the service briefly during HA synchronisation, hence the
+      # delay.
+      - alert: KeaServiceDisabled
+        expr: kea_service_globally_disabled == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "DHCP service is disabled on Kea target {{ $labels.instance }}"
+
+      - alert: KeaControlSocketNotReady
+        expr: kea_control_socket_status{status!="ready"} == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "DHCP sockets on Kea target {{ $labels.instance }} are {{ $labels.status }}"
+
+  - name: kea-ha
+    rules:
+      - alert: KeaHATerminated
+        expr: kea_ha_state{state="terminated"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HA server {{ $labels.server }} in {{ $labels.relationship }} is terminated and needs a restart"
+
+      - alert: KeaHAPartnerDown
+        expr: kea_ha_state{state="partner-down"} == 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HA server {{ $labels.server }} in {{ $labels.relationship }} is serving alone in partner-down"
+
+      # Deduplicated by server first, so two exporters scraping one daemon
+      # during a migration cannot count one server twice.
+      - alert: KeaHASplitBrain
+        expr: |
+          count by (relationship) (
+            max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1
+          ) > 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Both sides of HA relationship {{ $labels.relationship }} are in partner-down"
+
+      - alert: KeaHANoActiveServer
+        expr: max by (relationship) (kea_ha_scopes_served) == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No server in HA relationship {{ $labels.relationship }} is serving any scope"
+
+      - alert: KeaHACommunicationInterrupted
+        expr: kea_ha_communication_interrupted == 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} has lost contact with HA partner {{ $labels.partner }}"
+
+      - alert: KeaHAFailoverImminent
+        expr: kea_ha_communication_interrupted == 1 and kea_ha_unacked_clients_left <= 2
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kea target {{ $labels.instance }} is about to move to partner-down against {{ $labels.partner }}"
+
+      - alert: KeaHANotOperational
+        expr: kea_ha_state{state=~"waiting|syncing|ready"} == 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "HA server {{ $labels.server }} in {{ $labels.relationship }} has been in {{ $labels.state }} for 15 minutes"
+
+      - alert: KeaHAMaintenance
+        expr: kea_ha_state{state=~"in-maintenance|partner-in-maintenance"} == 1
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "HA server {{ $labels.server }} in {{ $labels.relationship }} has been in {{ $labels.state }} for an hour"
+
+      # Kea's HA hook warns above 30 seconds of skew and terminates above 60.
+      - alert: KeaHAClockSkew
+        expr: abs(kea_ha_clock_skew_seconds) > 30
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Clock skew between {{ $labels.instance }} and HA partner {{ $labels.partner }} is over 30 seconds"
+
+  - name: kea-leases
+    rules:
+      - alert: KeaPoolNearExhaustion
+        expr: |
+          (kea_dhcp4_pool_addresses_assigned / kea_dhcp4_pool_addresses > 0.9)
+          or (kea_dhcp6_pool_nas_assigned / kea_dhcp6_pool_nas > 0.9)
+          or (kea_dhcp6_pd_pool_pds_assigned / kea_dhcp6_pd_pool_pds > 0.9)
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pool {{ $labels.pool_id }} of subnet {{ $labels.subnet_id }} on {{ $labels.instance }} is over 90% assigned"
+
+      # The global counters always exist; per-subnet ones appear only after a
+      # subnet's first failure (DESIGN.md §3.2.14).
+      - alert: KeaAllocationFailures
+        expr: |
+          rate(kea_dhcp4_allocation_failures_total[5m]) > 0
+          or rate(kea_dhcp6_allocation_failures_total[5m]) > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} is failing to allocate leases"
+
+      # Only drop reasons that indicate a fault. not-for-us is normal in HA,
+      # admin-filtered is intentional, and duplicate is routine.
+      - alert: KeaPacketDropRateHigh
+        expr: |
+          (
+            sum without (reason) (rate(kea_dhcp4_packets_dropped_total{reason=~"queue-full|processing-failed|parse-failed"}[5m]))
+            / rate(kea_dhcp4_packets_received_all_total[5m]) > 0.01
+            and rate(kea_dhcp4_packets_received_all_total[5m]) > 1
+          )
+          or
+          (
+            sum without (reason) (rate(kea_dhcp6_packets_dropped_total{reason=~"queue-full|processing-failed|parse-failed"}[5m]))
+            / rate(kea_dhcp6_packets_received_all_total[5m]) > 0.01
+            and rate(kea_dhcp6_packets_received_all_total[5m]) > 1
+          )
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Kea target {{ $labels.instance }} is dropping over 1% of packets to queue, processing or parse failures"
+
+      - alert: KeaDdnsUpdateFailures
+        expr: rate(kea_d2_updates_failed_total[10m]) + rate(kea_d2_updates_timed_out_total[10m]) > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "DHCP-DDNS target {{ $labels.instance }} has failing or timed-out DNS updates"

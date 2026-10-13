@@ -1,0 +1,50 @@
+# Restricts the exporter to what it needs: ingress from the scraper only, and
+# egress to DNS and the Kea control sockets only. Adjust the selectors, CIDRs
+# and ports to your cluster. A NetworkPolicy is enforced only by a CNI that
+# supports it.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kea-metrics-exporter
+  labels:
+    app.kubernetes.io/name: kea-metrics-exporter
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kea-metrics-exporter
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 10167
+  egress:
+    # The Kea control sockets. Kea commonly runs outside the cluster or with
+    # host networking, so these are addressed by CIDR.
+    - to:
+        - ipBlock:
+            cidr: 192.0.2.0/24
+      ports:
+        - protocol: TCP
+          port: 8004
+    # Cluster DNS, to resolve the Kea hostnames in KEA_TARGETS.
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
