@@ -67,7 +67,9 @@ Signed-off-by: Your Name <you@example.com>
 
 Pull requests fail the DCO check in CI if any commit is unsigned, or if a
 commit's `Signed-off-by` trailer does not match its author or committer
-email.
+email. Pull requests opened by Dependabot are exempt: its sign-off address
+never matches its author address. The exemption is keyed on GitHub's record
+of who opened the pull request, not on anything a commit can set.
 
 ## Reporting a vulnerability
 

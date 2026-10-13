@@ -67,9 +67,13 @@ jobs:
       - run: npm ci
       - run: npm run check:secrets
 
+  # Dependabot signs off as support@github.com but authors its commits as its
+  # own noreply address, so the email match always fails for it. The skip
+  # keys on the pull request's author, which GitHub records and a commit
+  # cannot forge, rather than on commit emails, which anyone can set.
   dco:
     name: DCO sign-off
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
