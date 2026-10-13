@@ -25,8 +25,19 @@ function strings(obj: Obj, key: string, where: string): string[] {
   return value;
 }
 
+// Kea reports no usable value for a partner it has not reached yet: absent.
+function optionalString(obj: Obj, key: string, where: string): string | undefined {
+  const value = obj[key];
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value !== "string") fail(`${where}.${key} is not a string`);
+  return value;
+}
+
 function optionalNumber(obj: Obj, key: string, where: string): number | undefined {
   if (!(key in obj)) return undefined;
+  // Kea sends null for a value it does not know, such as the partner's clock
+  // skew while the partner is unreachable: that is absent, not malformed.
+  if (obj[key] === null) return undefined;
   const value = obj[key];
   if (typeof value !== "number" || !Number.isFinite(value)) fail(`${where}.${key} is not a number`);
   return value;
@@ -34,6 +45,7 @@ function optionalNumber(obj: Obj, key: string, where: string): number | undefine
 
 function optionalBoolean(obj: Obj, key: string, where: string): boolean | undefined {
   if (!(key in obj)) return undefined;
+  if (obj[key] === null) return undefined;
   const value = obj[key];
   if (typeof value !== "boolean") fail(`${where}.${key} is not a boolean`);
   return value;
@@ -55,8 +67,8 @@ function parseRemote(value: unknown): HaRemote {
   return {
     serverName: string(value, "server-name", at),
     role: string(value, "role", at),
-    lastState: string(value, "last-state", at),
-    lastScopes: strings(value, "last-scopes", at),
+    lastState: optionalString(value, "last-state", at),
+    lastScopes: value["last-scopes"] === null ? [] : strings(value, "last-scopes", at),
     communicationInterrupted: optionalBoolean(value, "communication-interrupted", at),
     inTouch: optionalBoolean(value, "in-touch", at),
     ageSeconds: optionalNumber(value, "age", at),

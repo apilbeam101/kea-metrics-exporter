@@ -463,9 +463,13 @@ wrong daemon is a configuration error and rendering it would be misleading. A
 daemon with no traffic yet may return none of these prefixes. That case is
 inconclusive, not a mismatch.
 
-The two timestamps are derived from relative values, so they move by up to a
-second between polls. Rounding keeps them stable enough for
-`changes(kea_config_reload_timestamp_seconds[1h])` to count reloads.
+The two timestamps are derived from relative values: poll time minus a
+whole-second `uptime` or `reload`. Rounding alone was observed live to leave
+them wobbling by a second between polls, which `changes()` would count as
+restarts or reloads. A newly derived value within two seconds of the last
+published one therefore keeps the last value. A real restart or reload moves
+it far further, so `changes(kea_config_reload_timestamp_seconds[1h])` counts
+reloads.
 
 ### 5.2 High availability
 
@@ -526,14 +530,20 @@ next render.
 ([§7](#7-dashboard-and-alerting)):
 
 ```promql
-# No server in a relationship is serving any scope.
-max by (relationship) (kea_ha_scopes_served) == 0
+# No server in a relationship is serving any scope. Only targets that are up
+# count: a down target's series keep their last values (§5.8), so a primary
+# that died while serving would otherwise still count as serving.
+max by (relationship) (
+  kea_ha_scopes_served and on (job, instance) kea_up == 1
+) == 0
 
 # Split brain: more than one side of a relationship believes its partner is down.
 # Deduplicated by server first, so two exporters scraping one daemon during a
 # migration cannot count one server twice.
 count by (relationship) (
-  max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1
+  max by (relationship, server) (
+    kea_ha_state{state="partner-down"} and on (job, instance) kea_up == 1
+  ) == 1
 ) > 1
 
 # A server stuck outside its operational states.
@@ -972,14 +982,14 @@ rule that fires unconditionally.
 | `KeaCollectorFailing` | `kea_collector_success == 0` | warning |
 | `KeaHATerminated` | `kea_ha_state{state="terminated"} == 1` | critical |
 | `KeaHAPartnerDown` | `kea_ha_state{state="partner-down"} == 1` | critical |
-| `KeaHASplitBrain` | `count by (relationship) (max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1) > 1` | critical |
-| `KeaHANoActiveServer` | `max by (relationship) (kea_ha_scopes_served) == 0` | critical |
+| `KeaHASplitBrain` | More than one server in a relationship in `partner-down`, counting only targets that are up, deduplicated by server | critical |
+| `KeaHANoActiveServer` | No up target in a relationship serving a scope: `max by (relationship) (kea_ha_scopes_served and on (job, instance) kea_up == 1) == 0`. A down target counts as serving nothing, whatever its frozen series say | critical |
 | `KeaHACommunicationInterrupted` | `kea_ha_communication_interrupted == 1` | warning |
 | `KeaHAFailoverImminent` | `kea_ha_communication_interrupted == 1 and kea_ha_unacked_clients_left <= 2` | critical |
 | `KeaHANotOperational` | `kea_ha_state{state=~"waiting\|syncing\|ready"} == 1` for 15 m | warning |
 | `KeaHAMaintenance` | `kea_ha_state{state=~"in-maintenance\|partner-in-maintenance"} == 1` for 1 h | info |
 | `KeaHAClockSkew` | `abs(kea_ha_clock_skew_seconds) > 30`. Kea terminates HA at 60 | warning |
-| `KeaServiceDisabled` | `kea_service_globally_disabled == 1` for 5 m | warning |
+| `KeaServiceDisabled` | `kea_service_globally_disabled == 1` for 5 m, `unless` the same target's HA state is `in-maintenance`. A server in deliberate maintenance holds its service disabled for the whole window, observed live | warning |
 | `KeaControlSocketNotReady` | `kea_control_socket_status{status!="ready"} == 1` | warning |
 | `KeaPoolNearExhaustion` | `kea_dhcp4_pool_addresses_assigned / kea_dhcp4_pool_addresses > 0.9`, and the v6 NA/PD equivalents | warning |
 | `KeaAllocationFailures` | `rate(kea_dhcp4_allocation_failures_total[5m]) > 0`, and v6. The global counter, because per-subnet failure statistics appear only after a subnet's first failure ([§3.2.14](#32-behaviours-that-shape-the-design)) | warning |
@@ -1043,8 +1053,9 @@ Each install guide includes the Kea side of the setup:
 ## 9. Open questions
 
 Each is resolved during live validation (Phase 15) and this section is updated
-with the finding. An early read-only pass against a Kea 3.2.1 hot-standby pair
-has already settled some of them, as noted below. That pass confirmed:
+with the finding. Validation against a Kea 3.2.1 hot-standby pair settled some
+of them, as noted below; [LIVE_VALIDATION.md](LIVE_VALIDATION.md) has the
+full record. That pass confirmed:
 
 - the `status-get` and HA field sets in [§3.2.15](#32-behaviours-that-shape-the-design)
   on both sides of a pair;
@@ -1060,15 +1071,15 @@ has already settled some of them, as noted below. That pass confirmed:
    then, since changing it after v0.1.0 breaks every deployed manifest.
 2. **`remote.age` and `remote.in-touch` semantics.** Believed to be seconds
    since the last successful partner contact and "has ever reached the partner"
-   respectively. **Partly confirmed:** on a healthy pair, `age` read 7–8
-   seconds on both sides and `in-touch` read `true`, consistent with the
-   default 10-second heartbeat. Still to do: interrupt and restore
-   communication and read both fields at each step. The metric names and help
-   text are adjusted before 1.0 if wrong.
+   respectively. **Resolved:** `age` is seconds since the partner was last
+   heard from. It rose steadily through an outage and fell back on
+   recovery. `in-touch` stayed `true` through the outage, so it means "has
+   been in contact since startup", not "in contact now". The HELP text says
+   so ([LIVE_VALIDATION.md](LIVE_VALIDATION.md)).
 3. **Whether `unavailable` appears in `local.state` or only in
-   `remote.last-state`.** It is in the state table but is not a documented
-   operational state. The state set includes it either way; the question only
-   affects alert design.
+   `remote.last-state`.** **Resolved:** it appears as the partner's last
+   state while the partner is unreachable. It was never observed as a
+   server's own state.
 4. **`status-get` output for hub-and-spoke and passive-backup.** Confirm that
    a hub reports one `high-availability[]` entry per relationship, and whether
    a passive-backup server reports a `remote` block at all.
@@ -1083,7 +1094,16 @@ has already settled some of them, as noted below. That pass confirmed:
    list of statistics removed on reload. Confirm whether they reset, persist
    or are recreated at zero. The per-subnet `v4-allocation-fail*` entries are
    created lazily ([§3.2.14](#32-behaviours-that-shape-the-design)), so this
-   needs a subnet that has had a failure.
+   needs a subnet that has had a failure. **Partly resolved:** across a real
+   configuration reload on Kea 3.2.1:
+   - per-subnet `cumulative-assigned-addresses` reset to zero, as
+     [§3.2.9](#32-behaviours-that-shape-the-design) expects;
+   - the global `cumulative-assigned-addresses` and `v4-lease-reuses` kept
+     counting;
+   - per-subnet `v4-lease-reuses` and `v4-reservation-conflicts` also
+     persisted rather than resetting.
+
+   Allocation failures are still unconfirmed.
 8. **Whether `parse-failed` is counted in `receive-drop`.** Affects whether a
    dashboard can show "other drops" as a remainder.
 9. **`status-get` field set on the DDNS daemon.** Confirm which

@@ -88,6 +88,11 @@ tests:
         values: '0x20'
       - series: 'kea_service_globally_disabled{job="kea",instance="dhcp4-c"}'
         values: '1 1 0x18'
+      # dhcp4-d is disabled because it is deliberately in HA maintenance.
+      - series: 'kea_service_globally_disabled{job="kea",instance="dhcp4-d"}'
+        values: '1x20'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-d",relationship="server1+server2",server="server2",state="in-maintenance"}'
+        values: '1x20'
       - series: 'kea_control_socket_status{job="kea",instance="dhcp4-a",status="ready"}'
         values: '0x20'
       - series: 'kea_control_socket_status{job="kea",instance="dhcp4-a",status="failed"}'
@@ -136,7 +141,8 @@ tests:
       - eval_time: 4m
         alertname: KeaServiceDisabled
         exp_alerts: []
-      # dhcp4-c was disabled for two minutes only, as during an HA sync.
+      # dhcp4-c was disabled for two minutes only, as during an HA sync, and
+      # dhcp4-d is in maintenance.
       - eval_time: 6m
         alertname: KeaServiceDisabled
         exp_alerts:
@@ -234,6 +240,40 @@ tests:
         values: '1x10'
       - series: 'kea_ha_state{job="kea",instance="dhcp4-d",relationship="server3+server4",server="server4",state="partner-down"}'
         values: '0x10'
+      # Every target up, unless a scenario says otherwise.
+      - series: 'kea_up{job="kea",instance="dhcp4-a"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea",instance="dhcp4-b"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea",instance="dhcp4-c"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea-old",instance="dhcp4-c"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea",instance="dhcp4-d"}'
+        values: '1x10'
+      # server5+server6, as observed live: the primary is down with its last
+      # scopes_served frozen at 1, and the standby has not taken over. Nobody
+      # is serving.
+      - series: 'kea_up{job="kea",instance="dhcp4-e"}'
+        values: '0x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-e",relationship="server5+server6",server="server5"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea",instance="dhcp4-f"}'
+        values: '1x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-f",relationship="server5+server6",server="server6"}'
+        values: '0x10'
+      # server7+server8: server7 died in partner-down, its state frozen;
+      # server8 is now genuinely partner-down. One live server, no split brain.
+      - series: 'kea_up{job="kea",instance="dhcp4-g"}'
+        values: '0x10'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-g",relationship="server7+server8",server="server7",state="partner-down"}'
+        values: '1x10'
+      - series: 'kea_up{job="kea",instance="dhcp4-h"}'
+        values: '1x10'
+      - series: 'kea_ha_state{job="kea",instance="dhcp4-h",relationship="server7+server8",server="server8",state="partner-down"}'
+        values: '1x10'
+      - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-h",relationship="server7+server8",server="server8"}'
+        values: '1x10'
       # server1+server2 serves nothing; server3+server4 is served by server3.
       - series: 'kea_ha_scopes_served{job="kea",instance="dhcp4-a",relationship="server1+server2",server="server1"}'
         values: '0x10'
@@ -262,6 +302,9 @@ tests:
           - exp_labels: { severity: critical, relationship: server1+server2 }
             exp_annotations:
               summary: "No server in HA relationship server1+server2 is serving any scope"
+          - exp_labels: { severity: critical, relationship: server5+server6 }
+            exp_annotations:
+              summary: "No server in HA relationship server5+server6 is serving any scope"
 
   - name: HA partner communication
     interval: 1m

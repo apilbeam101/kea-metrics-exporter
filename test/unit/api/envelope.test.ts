@@ -35,6 +35,10 @@ describe("classify", () => {
     assert.equal(ok(JSON.stringify({ result: 401, text: "Unauthorized" }), 401).kind, "auth");
   });
 
+  it("classifies the bare 401 object Kea 3.2 returns for a wrong password as auth", () => {
+    assert.equal(ok(fixture("auth-unauthorized.json"), 401).kind, "auth");
+  });
+
   it("classifies a 401 or 403 with a non-JSON body as auth", () => {
     assert.equal(ok("Unauthorized", 401).kind, "auth");
     assert.equal(ok("", 403).kind, "auth");

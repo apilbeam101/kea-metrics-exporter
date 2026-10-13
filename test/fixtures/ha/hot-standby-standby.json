@@ -5,6 +5,7 @@
       "pid": 2817,
       "uptime": 86523,
       "reload": 3611,
+      "csv-lease-file": "/var/lib/kea/leases4",
       "multi-threading-enabled": true,
       "thread-pool-size": 4,
       "packet-queue-size": 64,
@@ -13,7 +14,6 @@
         0.11,
         0.08
       ],
-      "extended-info-tables": false,
       "sockets": {
         "status": "ready"
       },

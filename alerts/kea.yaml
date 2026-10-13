@@ -64,9 +64,12 @@ groups:
           summary: "Kea target {{ $labels.instance }} runs a version below 3.0"
 
       # Kea disables the service briefly during HA synchronisation, hence the
-      # delay.
+      # delay, and for as long as a server is deliberately in maintenance,
+      # hence the exclusion.
       - alert: KeaServiceDisabled
-        expr: kea_service_globally_disabled == 1
+        expr: |
+          kea_service_globally_disabled == 1
+          unless on (job, instance) kea_ha_state{state="in-maintenance"} == 1
         for: 5m
         labels:
           severity: warning
@@ -99,12 +102,17 @@ groups:
         annotations:
           summary: "HA server {{ $labels.server }} in {{ $labels.relationship }} is serving alone in partner-down"
 
-      # Deduplicated by server first, so two exporters scraping one daemon
-      # during a migration cannot count one server twice.
+      # Both cross-server rules count only targets that are up: a down
+      # target's series keep their last values (DESIGN.md §5.8), so a server
+      # that died in partner-down, or while serving, must not count as still
+      # doing so. Deduplicated by server first, so two exporters scraping one
+      # daemon during a migration cannot count one server twice.
       - alert: KeaHASplitBrain
         expr: |
           count by (relationship) (
-            max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1
+            max by (relationship, server) (
+              kea_ha_state{state="partner-down"} and on (job, instance) kea_up == 1
+            ) == 1
           ) > 1
         for: 1m
         labels:
@@ -113,7 +121,10 @@ groups:
           summary: "Both sides of HA relationship {{ $labels.relationship }} are in partner-down"
 
       - alert: KeaHANoActiveServer
-        expr: max by (relationship) (kea_ha_scopes_served) == 0
+        expr: |
+          max by (relationship) (
+            kea_ha_scopes_served and on (job, instance) kea_up == 1
+          ) == 0
         for: 5m
         labels:
           severity: critical

@@ -854,13 +854,25 @@ fork.
   `imagetools create` does not copy referrer manifests.
 - A release with real notes.
 
-## Phase 15 — Live validation and fixture replacement
+## Phase 15 — Live validation and fixture reconciliation
 
 Against real Kea 3.2 servers: an HA pair of DHCPv4 daemons, at least one
-DHCPv6 daemon, and a DHCP-DDNS daemon. Capture `--dump-raw` from each, replace
-the Phase 1 hand-authored fixtures with sanitised captures, and reconcile every
-difference. The metric shape must be driven by real payloads, not by the field
-lists in this plan.
+DHCPv6 daemon, and a DHCP-DDNS daemon. Capture `--dump-raw` from each and
+reconcile every difference. The metric shape must be driven by real payloads,
+not by the field lists in this plan.
+
+As done, the fixtures were **not** replaced with sanitised captures. The
+sanitiser leaves numbers alone, so a capture would still publish the
+deployment's subnet IDs, pool layout, lease counts and traffic volumes.
+Instead:
+
+- each live shape difference was folded into a hand-authored fixture with
+  placeholder values;
+- the real captures stayed outside the repository;
+- a local test ran the exporter against those captures.
+
+The record is in [LIVE_VALIDATION.md](LIVE_VALIDATION.md), including which
+scenarios the available servers could not produce.
 
 HA scenarios, each recorded with its observed metric values:
 

@@ -24,6 +24,22 @@ export interface StatusMetrics {
   readonly threadPoolSize: AbsentUntilSetGauge;
   readonly packetQueueSize: AbsentUntilSetGauge;
   readonly packetQueueDepth: Gauge<"window">;
+  // The last published derived timestamps, kept to damp poll-to-poll jitter.
+  readonly derived: { start: number | undefined; reload: number | undefined };
+}
+
+// Start and reload times are derived as poll time minus a whole-second
+// uptime, so the result wobbles by a second between polls. Without damping,
+// changes() over the reload timestamp counts that wobble as reloads. A real
+// restart or reload moves the value by far more than the tolerance.
+export const DERIVED_TIMESTAMP_TOLERANCE_SECONDS = 2;
+
+export function stableTimestamp(previous: number | undefined, raw: number): number {
+  const rounded = Math.round(raw);
+  return previous !== undefined &&
+    Math.abs(rounded - previous) <= DERIVED_TIMESTAMP_TOLERANCE_SECONDS
+    ? previous
+    : rounded;
 }
 
 export function createStatusMetrics(base: TargetMetricsBase): StatusMetrics {
@@ -94,6 +110,7 @@ export function createStatusMetrics(base: TargetMetricsBase): StatusMetrics {
       labelNames: ["window"],
       registers,
     }),
+    derived: { start: undefined, reload: undefined },
   };
 }
 
@@ -118,8 +135,13 @@ export function applyStatusSuccess(
   status: Status,
   nowSeconds: number,
 ): void {
-  metrics.startTime.set(Math.round(nowSeconds - status.uptimeSeconds));
-  metrics.reloadTimestamp.set(Math.round(nowSeconds - status.reloadSeconds));
+  metrics.derived.start = stableTimestamp(metrics.derived.start, nowSeconds - status.uptimeSeconds);
+  metrics.derived.reload = stableTimestamp(
+    metrics.derived.reload,
+    nowSeconds - status.reloadSeconds,
+  );
+  metrics.startTime.set(metrics.derived.start);
+  metrics.reloadTimestamp.set(metrics.derived.reload);
 
   metrics.serviceDisabled.reset();
   if (status.dhcpState === undefined) {

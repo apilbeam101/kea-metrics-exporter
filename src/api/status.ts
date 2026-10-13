@@ -21,11 +21,14 @@ function requiredNumber(args: Obj, key: string): number {
 // type is a parse failure rather than a silently dropped series.
 function optionalNumber(args: Obj, key: string): number | undefined {
   if (!(key in args)) return undefined;
+  // Kea sends null for a value it does not know: absent, not malformed.
+  if (args[key] === null) return undefined;
   return requiredNumber(args, key);
 }
 
 function optionalBoolean(args: Obj, key: string): boolean | undefined {
   if (!(key in args)) return undefined;
+  if (args[key] === null) return undefined;
   const value = args[key];
   if (typeof value !== "boolean") fail(`"${key}" is not a boolean`);
   return value;

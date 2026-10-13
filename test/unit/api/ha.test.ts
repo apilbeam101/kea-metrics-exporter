@@ -61,6 +61,34 @@ describe("parseHighAvailability", () => {
     });
   });
 
+  it("treats the null fields Kea sends for an unreachable partner as absent", () => {
+    const [rel] = ha("ha/hot-standby-partner-unreachable.json") ?? [];
+    assert.equal(rel?.local.state, "partner-down");
+    assert.equal(rel?.remote?.lastState, "unavailable");
+    assert.equal(rel?.remote?.communicationInterrupted, true);
+    assert.equal(rel?.remote?.clockSkewSeconds, undefined);
+    assert.equal(rel?.remote?.ageSeconds, 200);
+    assert.equal(rel?.remote?.unackedClientsLeft, 6);
+  });
+
+  it("treats an unlearned partner state, empty or null, as absent", () => {
+    const [starting] = ha("ha/hot-standby-standby-starting.json") ?? [];
+    assert.equal(starting?.local.state, "waiting");
+    assert.equal(starting?.remote?.lastState, undefined);
+
+    const local = { "server-name": "server2", role: "standby", state: "waiting", scopes: [] };
+    const remote = {
+      "server-name": "server1",
+      role: "primary",
+      "last-state": null,
+      "last-scopes": null,
+    };
+    const [rel] =
+      parseHighAvailability([{ "ha-mode": "hot-standby", "ha-servers": { local, remote } }]) ?? [];
+    assert.equal(rel?.remote?.lastState, undefined);
+    assert.deepEqual(rel?.remote?.lastScopes, []);
+  });
+
   it("parses one relationship per hub entry", () => {
     const relationships = ha("ha/hub-two-relationships.json") ?? [];
     assert.deepEqual(

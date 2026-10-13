@@ -17,12 +17,12 @@ const PARTNER_GAUGES = [
   [
     "inTouch",
     "kea_ha_partner_in_touch",
-    "Whether this server reports being in touch with the partner (Kea's in-touch field)",
+    "1 once this server has been in contact with the partner since it started; stays 1 while the partner is unreachable, so it is not a liveness signal",
   ],
   [
     "ageSeconds",
     "kea_ha_partner_age_seconds",
-    "Partner contact age in seconds as reported by this server (Kea's age field)",
+    "Seconds since this server last heard from the partner",
   ],
   [
     "clockSkewSeconds",
@@ -183,13 +183,15 @@ export function applyHa(
 
     if (remote === undefined) continue;
     const partner = remote.serverName;
-    applyStateSet(
-      base,
-      "ha_partner_last_state",
-      HA_STATES,
-      classifyStateSetValue(remote.lastState, HA_STATES),
-      (state, v) => metrics.partnerLastState.labels({ relationship, partner, state }).set(v),
-    );
+    if (remote.lastState !== undefined) {
+      applyStateSet(
+        base,
+        "ha_partner_last_state",
+        HA_STATES,
+        classifyStateSetValue(remote.lastState, HA_STATES),
+        (state, v) => metrics.partnerLastState.labels({ relationship, partner, state }).set(v),
+      );
+    }
     for (const scope of remote.lastScopes) {
       metrics.partnerLastScope.labels({ relationship, partner, scope }).set(1);
     }

@@ -19,8 +19,8 @@ global ones at the end, served at bare `/metrics`.
 | `kea_ha_clock_skew_seconds` | gauge | `relationship`, `partner` | Partner clock minus local clock, in seconds; signed |
 | `kea_ha_communication_interrupted` | gauge | `relationship`, `partner` | 1 when there has been no successful contact with the partner for longer than max-response-delay |
 | `kea_ha_connecting_clients` | gauge | `relationship`, `partner` | Distinct clients seen trying to reach the partner while communication is interrupted |
-| `kea_ha_partner_age_seconds` | gauge | `relationship`, `partner` | Partner contact age in seconds as reported by this server (Kea's age field) |
-| `kea_ha_partner_in_touch` | gauge | `relationship`, `partner` | Whether this server reports being in touch with the partner (Kea's in-touch field) |
+| `kea_ha_partner_age_seconds` | gauge | `relationship`, `partner` | Seconds since this server last heard from the partner |
+| `kea_ha_partner_in_touch` | gauge | `relationship`, `partner` | 1 once this server has been in contact with the partner since it started; stays 1 while the partner is unreachable, so it is not a liveness signal |
 | `kea_ha_partner_last_scope` | gauge | `relationship`, `partner`, `scope` | 1 for each HA scope the partner was last known to serve |
 | `kea_ha_partner_last_state` | gauge | `relationship`, `partner`, `state` | The partner's HA state as last learned by this server, as a state set |
 | `kea_ha_relationship_info` | gauge | `relationship`, `server`, `partner`, `mode`, `role`, `partner_role` | Always 1; the relationship's mode and each side's role. partner and partner_role are empty when there is no partner block |

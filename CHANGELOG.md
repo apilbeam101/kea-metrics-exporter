@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-13
+
 ### Added
 
 - Design and implementation plan: `docs/DESIGN.md`, `docs/IMPLEMENTATION.md`.
@@ -246,6 +248,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   All actions are SHA-pinned.
 - `npm run check:secrets` and `npm run changelog:extract`, and
   `docs/RELEASE_CHECKLIST.md`.
+- Live validation against a Kea 3.2.1 hot-standby pair
+  (`docs/LIVE_VALIDATION.md`). It covered steady state, a configuration
+  reload, the standby and the primary each stopped and restarted, and
+  maintenance mode. It found and fixed the following:
+  - `null` HA fields while a partner is unreachable no longer freeze every HA
+    series;
+  - an unlearned partner state just after a restart no longer fails the HA
+    collector;
+  - derived start and reload timestamps no longer wobble between polls;
+  - `KeaServiceDisabled` no longer fires during planned HA maintenance;
+  - `KeaHANoActiveServer` and `KeaHASplitBrain` count only targets that are
+    up, so a dead server's frozen series cannot hide an outage or fake a
+    split brain.
+  Partner `age` and `in-touch` HELP text now reflect the observed
+  semantics.
 - Integration tests against a mock Kea control socket. They cover
   independent targets, one target hard down, zero upstream requests per
   scrape, a rejected credential, routing errors, and shutdown.

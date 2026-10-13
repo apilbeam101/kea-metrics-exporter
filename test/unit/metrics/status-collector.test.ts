@@ -89,6 +89,39 @@ describe("StatusCollector: rendered series", () => {
     );
   });
 
+  it("keeps derived timestamps steady across poll-to-poll jitter", async () => {
+    // Uptime advances by whole seconds while the poll clock does not line up
+    // with them, which is what made the live values wobble by a second.
+    const status = (uptime: number, reload: number) => answer(0, { uptime, reload });
+    const { registry, collector, clock } = setup({
+      status: [status(1000, 500), status(1030, 530), status(1059, 559), status(1090, 590)],
+    });
+    const seen: Array<[number | undefined, number | undefined]> = [];
+    for (const advanceMs of [0, 30_400, 29_300, 30_900]) {
+      clock.advance(advanceMs);
+      await collector.collect();
+      seen.push([
+        await value(registry, "kea_start_time_seconds"),
+        await value(registry, "kea_config_reload_timestamp_seconds"),
+      ]);
+    }
+    assert.equal(new Set(seen.map(([start]) => start)).size, 1);
+    assert.equal(new Set(seen.map(([, reload]) => reload)).size, 1);
+  });
+
+  it("moves the reload timestamp on a real reload", async () => {
+    const { registry, collector, clock } = setup({
+      status: [answer(0, { uptime: 1000, reload: 1000 }), answer(0, { uptime: 1030, reload: 2 })],
+    });
+    await collector.collect();
+    const before = await value(registry, "kea_config_reload_timestamp_seconds");
+    clock.advance(30_000);
+    await collector.collect();
+    const after = await value(registry, "kea_config_reload_timestamp_seconds");
+    assert.ok(before !== undefined && after !== undefined && after - before > 1000);
+    assert.equal(await value(registry, "kea_start_time_seconds"), NOW_MS / 1000 - 1000);
+  });
+
   it("renders the multi-threading gauges and queue depth windows", async () => {
     const { registry, collector } = setup({ status: fixture("status/dhcp4-mt-on.json") });
     await collector.collect();

@@ -102,6 +102,47 @@ describe("HaCollector", () => {
     for (const [name, v] of expected) assert.equal(await value(registry, name, labels), v, name);
   });
 
+  it("renders a partner-down outage truthfully, with clock skew absent rather than frozen", async () => {
+    const { registry, collector, warnings } = setup();
+    collector.apply(haOf("ha/hot-standby-primary.json"));
+    collector.apply(haOf("ha/hot-standby-partner-unreachable.json"));
+    const labels = { relationship: "server1+server2", partner: "server2" };
+    assert.equal(await value(registry, "kea_collector_success", { collector: "ha" }), 1);
+    assert.equal(
+      await value(registry, "kea_ha_state", {
+        relationship: "server1+server2",
+        server: "server1",
+        state: "partner-down",
+      }),
+      1,
+    );
+    assert.equal(
+      await value(registry, "kea_ha_partner_last_state", { ...labels, state: "unavailable" }),
+      1,
+    );
+    assert.equal(await value(registry, "kea_ha_communication_interrupted", labels), 1);
+    assert.equal(await value(registry, "kea_ha_partner_age_seconds", labels), 200);
+    assert.equal(await value(registry, "kea_ha_clock_skew_seconds", labels), undefined);
+    assert.deepEqual(warnings, []);
+  });
+
+  it("renders a starting server's own state, and no partner state until it has learned one", async () => {
+    const { registry, collector, warnings } = setup();
+    collector.apply(haOf("ha/hot-standby-standby-starting.json"));
+    assert.equal(await value(registry, "kea_collector_success", { collector: "ha" }), 1);
+    assert.equal(
+      await value(registry, "kea_ha_state", {
+        relationship: "server1+server2",
+        server: "server2",
+        state: "waiting",
+      }),
+      1,
+    );
+    assert.equal(await count(registry, "kea_ha_partner_last_state"), 0);
+    assert.equal(await count(registry, "kea_exporter_unknown_enum_total"), 0);
+    assert.deepEqual(warnings, []);
+  });
+
   it("renders two relationships for a hub, and drops one removed between cycles", async () => {
     const { registry, collector } = setup();
     collector.apply(haOf("ha/hub-two-relationships.json"));

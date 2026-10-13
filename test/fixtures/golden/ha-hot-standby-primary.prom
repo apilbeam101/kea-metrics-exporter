@@ -41,11 +41,11 @@ kea_packet_queue_depth_avg{window="1000"} 0.08
 # TYPE kea_ha_communication_interrupted gauge
 kea_ha_communication_interrupted{relationship="server1+server2",partner="server2"} 0
 
-# HELP kea_ha_partner_in_touch Whether this server reports being in touch with the partner (Kea's in-touch field)
+# HELP kea_ha_partner_in_touch 1 once this server has been in contact with the partner since it started; stays 1 while the partner is unreachable, so it is not a liveness signal
 # TYPE kea_ha_partner_in_touch gauge
 kea_ha_partner_in_touch{relationship="server1+server2",partner="server2"} 1
 
-# HELP kea_ha_partner_age_seconds Partner contact age in seconds as reported by this server (Kea's age field)
+# HELP kea_ha_partner_age_seconds Seconds since this server last heard from the partner
 # TYPE kea_ha_partner_age_seconds gauge
 kea_ha_partner_age_seconds{relationship="server1+server2",partner="server2"} 4
 

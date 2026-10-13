@@ -72,10 +72,15 @@ describe("envelope fixtures", () => {
     }
   });
 
-  it("include the bare-object authentication failure", () => {
-    const parsed = load("envelope/auth-forbidden.json");
-    assert.ok(isObj(parsed));
-    assert.equal(parsed.result, 403);
+  it("include both bare-object authentication failures", () => {
+    for (const [file, code] of [
+      ["envelope/auth-forbidden.json", 403],
+      ["envelope/auth-unauthorized.json", 401],
+    ] as const) {
+      const parsed = load(file);
+      assert.ok(isObj(parsed));
+      assert.equal(parsed.result, code);
+    }
   });
 
   it("include the malformed shapes", () => {

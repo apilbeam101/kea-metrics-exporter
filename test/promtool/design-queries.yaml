@@ -5,12 +5,17 @@ groups:
   - name: design-queries
     rules:
       - record: design:no_active_server
-        expr: max by (relationship) (kea_ha_scopes_served) == 0
+        expr: |
+          max by (relationship) (
+            kea_ha_scopes_served and on (job, instance) kea_up == 1
+          ) == 0
 
       - record: design:split_brain
         expr: |
           count by (relationship) (
-            max by (relationship, server) (kea_ha_state{state="partner-down"}) == 1
+            max by (relationship, server) (
+              kea_ha_state{state="partner-down"} and on (job, instance) kea_up == 1
+            ) == 1
           ) > 1
 
       - record: design:stuck_outside_operational

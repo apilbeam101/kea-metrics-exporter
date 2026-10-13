@@ -6,6 +6,14 @@ evaluation_interval: 1m
 tests:
   - interval: 1m
     input_series:
+      - series: 'kea_up{instance="dhcp4-a"}'
+        values: '1x20'
+      - series: 'kea_up{instance="dhcp4-b"}'
+        values: '1x20'
+      - series: 'kea_up{instance="dhcp4-c"}'
+        values: '1x20'
+      - series: 'kea_up{instance="dhcp4-d"}'
+        values: '1x20'
       # server1+server2: neither side serves, both in partner-down, and the
       # partner is about to be declared down.
       - series: 'kea_ha_scopes_served{instance="dhcp4-a",relationship="server1+server2",server="server1"}'

@@ -26,12 +26,14 @@ export interface HaLocal {
   readonly scopes: readonly string[];
 }
 
-// Every field but the partner's name, state and scopes is optional: an absent
+// Every field but the partner's name, role and scopes is optional: an absent
 // field is an absent series, never zero (D§5.2).
 export interface HaRemote {
   readonly serverName: string;
   readonly role: string;
-  readonly lastState: string;
+  // Undefined on a server that has not yet learned its partner's state, as
+  // just after startup.
+  readonly lastState: string | undefined;
   readonly lastScopes: readonly string[];
   readonly communicationInterrupted: boolean | undefined;
   readonly inTouch: boolean | undefined;
