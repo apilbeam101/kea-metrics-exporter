@@ -791,6 +791,14 @@ Before `git init`:
 Only then make the first, signed-off commit. Every later scan runs over full
 history, so anything in that first commit is permanent.
 
+As done, the gitleaks scan ran on the staged content
+(`gitleaks git --pre-commit --staged --redact`), which is exactly what the
+first commit holds. A real-value scan also ran over every staged file. It
+drew its terms from the gitignored live captures and printed none of them.
+Phases 0–13 went in as one signed-off "Initial import" commit and were
+pushed before any workflow existed. The workflows below arrive in the
+following commit.
+
 `ci.yml`:
 
 - fast leg: typecheck, lint, unit tests;
@@ -823,9 +831,14 @@ CI secrets are reachable from fork pull requests. Live validation is manual
   section, failing if no such section exists.
 
 `rebuild.yml` rebuilds the base image monthly and republishes only the moving
-tags; exact-version tags are never overwritten. `scan.yml` runs a monthly
+`:latest` tag. Exact-version tags are never overwritten: the shared
+`_publish-image.yml` takes a `tag-version` input, which the rebuild sets to
+`false` for both GHCR and the Docker Hub mirror. `scan.yml` runs a monthly
 vulnerability scan to SARIF. All actions are SHA-pinned. `promtool` and
 `gitleaks` are fetched from their official releases and verified by sha256.
+
+[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) holds every release step a
+workflow cannot check, plus the one-time repository settings.
 
 The first tag is deferred until Phase 15 completes. A correct release pipeline
 and an exporter validated against real Kea servers are different claims, and

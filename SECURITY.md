@@ -15,6 +15,15 @@ Only the latest minor release line receives security fixes until v1.0.0
 ships. This section will be updated once a formal support window is
 established.
 
+## Image updates
+
+The container image is rebuilt on the first of every month against the
+current base image. The rebuild republishes only `:latest`, never an exact
+version tag, so a pinned version keeps the image you reviewed. The published
+image is scanned for high and critical vulnerabilities on the same schedule,
+and findings go to the repository's Security tab. Pin a version, or a digest,
+and update deliberately.
+
 ## The exporter's Kea credential is administrative
 
 Open-source Kea's control-socket authentication is all-or-nothing. Any user

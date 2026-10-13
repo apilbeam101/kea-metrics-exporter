@@ -230,6 +230,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - every dashboard query parsed by `promtool`.
 - `npm run fetch:promtool` and `npm run fetch:gitleaks` (pinned, sha256-verified), and
   `npm run check:alerts`.
+- CI and release workflows (`.github/workflows/`):
+  - `ci.yml`: a fast leg, a Linux/macOS/Windows by Node 24/current matrix,
+    supply-chain guards with promtool, a full-history gitleaks scan, the DCO
+    check on pull requests, and a multi-arch Docker build with the container
+    tests;
+  - `release.yml`: on `v*.*.*`, it re-verifies the commit, checks the tag
+    against `package.json` and `CHANGELOG.md`, publishes an attested
+    multi-arch image with per-architecture SBOMs to GHCR, mirrors it to
+    Docker Hub best-effort, optionally publishes to npm, and creates a GitHub
+    Release from the changelog;
+  - `rebuild.yml`: a monthly base-image rebuild that republishes only
+    `:latest`;
+  - `scan.yml`: a monthly vulnerability scan to the Security tab.
+  All actions are SHA-pinned.
+- `npm run check:secrets` and `npm run changelog:extract`, and
+  `docs/RELEASE_CHECKLIST.md`.
 - Integration tests against a mock Kea control socket. They cover
   independent targets, one target hard down, zero upstream requests per
   scrape, a rejected credential, routing errors, and shutdown.

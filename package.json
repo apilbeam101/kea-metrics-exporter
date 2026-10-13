@@ -35,7 +35,9 @@
     "check:alerts": "node --experimental-strip-types scripts/check-alerts.ts",
     "fetch:promtool": "node --experimental-strip-types scripts/fetch-promtool.ts",
     "generate:dashboard": "node --experimental-strip-types scripts/generate-dashboard.ts",
-    "fetch:gitleaks": "node --experimental-strip-types scripts/fetch-gitleaks.ts"
+    "fetch:gitleaks": "node --experimental-strip-types scripts/fetch-gitleaks.ts",
+    "check:secrets": "node --experimental-strip-types scripts/check-secrets.ts",
+    "changelog:extract": "node --experimental-strip-types scripts/extract-changelog-section.ts"
   },
   "dependencies": {
     "@prometheus-io/client": "^0.16.1",

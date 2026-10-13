@@ -26,7 +26,9 @@ function listen(options: Parameters<typeof createServer>[0]): Promise<Server> {
 }
 
 function url(server: Server): string {
-  return `https://localhost:${(server.address() as AddressInfo).port}`;
+  // 127.0.0.1, not localhost: localhost may resolve to ::1 first on Linux, and
+  // the test certificates carry an IP:127.0.0.1 SAN.
+  return `https://127.0.0.1:${(server.address() as AddressInfo).port}`;
 }
 
 const agents: Agent[] = [];
