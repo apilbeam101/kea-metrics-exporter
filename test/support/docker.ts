@@ -1,13 +1,15 @@
 import { execFileSync, spawnSync } from "node:child_process";
 
-// Container tests run only where a Docker daemon answers; elsewhere they are
-// skipped rather than failed, and CI runs them.
+// Container tests run only where a Linux Docker daemon answers; elsewhere
+// they are skipped rather than failed, and CI runs them. The OS check
+// matters: Windows runners have Docker in Windows-containers mode, which
+// cannot build this Linux image.
 export function dockerAvailable(): boolean {
-  const result = spawnSync("docker", ["info", "--format", "{{.ServerVersion}}"], {
+  const result = spawnSync("docker", ["info", "--format", "{{.OSType}}"], {
     encoding: "utf8",
     timeout: 10_000,
   });
-  return result.status === 0;
+  return result.status === 0 && result.stdout.trim() === "linux";
 }
 
 export function docker(args: readonly string[], timeoutMs = 600_000): string {
