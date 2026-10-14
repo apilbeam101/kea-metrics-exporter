@@ -4,19 +4,19 @@
 # produce architecture-independent JavaScript, which holds because
 # scripts/check-no-native-addons.ts keeps every runtime dependency pure JS.
 # Only the runtime stage has to match the requested --platform.
-FROM --platform=$BUILDPLATFORM node:24-slim AS deps
+FROM --platform=$BUILDPLATFORM node:26-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts
 
-FROM --platform=$BUILDPLATFORM node:24-slim AS builder
+FROM --platform=$BUILDPLATFORM node:26-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json tsconfig.json ./
 RUN npm ci --ignore-scripts
 COPY src ./src
 RUN npm run build
 
-FROM node:24-slim AS runtime
+FROM node:26-slim AS runtime
 
 ARG GIT_COMMIT=unknown
 ARG IMAGE_VERSION=0.0.0
