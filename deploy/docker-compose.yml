@@ -3,7 +3,7 @@ services:
     # Pin a released tag, never :latest, so `docker compose pull` cannot
     # silently change what runs. To build from source instead, use
     # `build: ..` (docs/INSTALL_DOCKER.md).
-    image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.0
+    image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.1
     restart: unless-stopped
     env_file:
       - ../.env
