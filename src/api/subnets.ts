@@ -25,7 +25,9 @@ export function parseSubnetList(command: string, args: unknown): SubnetMap {
     if (!Number.isSafeInteger(id) || typeof prefix !== "string") {
       fail(command, "a subnet entry has no integer id or no prefix");
     }
-    if (sharedNetwork !== undefined && typeof sharedNetwork !== "string") {
+    // Kea emits "shared-network-name": null for a subnet that belongs to no
+    // shared network, so null is as valid here as an absent key.
+    if (sharedNetwork != null && typeof sharedNetwork !== "string") {
       fail(command, "shared-network-name is not a string");
     }
     map.set(id as number, { prefix, sharedNetwork: sharedNetwork ?? "" });

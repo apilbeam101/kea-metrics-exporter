@@ -292,8 +292,9 @@ describe("subnet and config-hash fixtures", () => {
         assert.match(String(subnet.subnet), /\/\d+$/, file);
       }
     }
+    // Kea reports no shared network as an explicit null, not an absent key.
     const v4 = args("subnets/subnet4-list.json").subnets as Obj[];
-    assert.ok(v4.some((s) => s["shared-network-name"] === undefined));
+    assert.ok(v4.some((s) => s["shared-network-name"] === null));
     assert.ok(v4.some((s) => typeof s["shared-network-name"] === "string"));
   });
 

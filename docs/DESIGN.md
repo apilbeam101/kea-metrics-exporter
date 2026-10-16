@@ -668,6 +668,9 @@ the `subnet_cmds` hook.
   renders subnet series without the extra labels. It does not retry every
   cycle.
 - Result 3 (no subnets configured) is an empty mapping, not an error.
+- Kea reports a subnet that is in no shared network as
+  `"shared-network-name": null`. That, and an absent key, both give an empty
+  `shared_network`; only a non-string, non-null value is a parse error.
 - A subnet ID present in the statistics but missing from the mapping is
   rendered with empty `prefix` and `shared_network`. That is the expected
   state for one cycle after a reload, until the hash change triggers a refresh.

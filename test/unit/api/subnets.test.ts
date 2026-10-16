@@ -29,6 +29,22 @@ describe("parseSubnetList", () => {
     );
   });
 
+  it("treats a null and an absent shared network alike", () => {
+    const args = {
+      subnets: [
+        { id: 1, subnet: "192.0.2.0/24", "shared-network-name": null },
+        { id: 2, subnet: "198.51.100.0/24" },
+      ],
+    };
+    assert.deepEqual(
+      parseSubnetList("subnet4-list", args),
+      new Map([
+        [1, { prefix: "192.0.2.0/24", sharedNetwork: "" }],
+        [2, { prefix: "198.51.100.0/24", sharedNetwork: "" }],
+      ]),
+    );
+  });
+
   it("treats an empty list, or no arguments, as an empty map", () => {
     assert.equal(
       parseSubnetList("subnet4-list", argsOf("subnets/subnet4-list-empty.json")).size,

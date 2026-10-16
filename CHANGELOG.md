@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `ENABLE_SUBNET_LABELS=true` no longer fails the `subnet_labels` collector with
+  a parse error on a deployment that uses no shared networks. Kea reports such a
+  subnet as `"shared-network-name": null`, which is now accepted as an empty
+  `shared_network` label.
+
 ## [0.1.0] - 2026-10-13
 
 ### Added

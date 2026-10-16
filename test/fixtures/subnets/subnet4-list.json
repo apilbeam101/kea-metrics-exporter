@@ -6,7 +6,8 @@
       "subnets": [
         {
           "id": 1,
-          "subnet": "192.0.2.0/24"
+          "subnet": "192.0.2.0/24",
+          "shared-network-name": null
         },
         {
           "id": 2,

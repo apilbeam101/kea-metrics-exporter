@@ -631,6 +631,8 @@ Opt-in: D§5.6. `api/subnets.ts`, `api/config-hash.ts`, `domain/subnet-map.ts`.
 - **Hook absent.** Result 2 sets `kea_command_supported` to 0, logs once, and
   stops calling the list command until the next hash change.
 - **No subnets.** Result 3 is an empty map.
+- **No shared network.** Kea sends `"shared-network-name": null`, which parses
+  to an empty `sharedNetwork`, as does an absent key.
 - **Rendering.** The `prefix` and `shared_network` labels are added at render
   time from the cached map.
 - **Flag off.** Neither command is ever sent.
