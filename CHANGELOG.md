@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-26
+
+### Security
+
+- The image is rebuilt on Node.js 26.12.1, which fixes CVE-2026-111497, an
+  out-of-bounds write in the bundled Brotli decoder. The 0.1.1 image ships
+  Node.js 26.12.0. The exporter itself does not reach the vulnerable code: its
+  Kea client uses undici's `request()`, which never decompresses a response
+  body, so this is a defence-in-depth rebuild rather than a fix for an
+  exploitable path.
+- undici is updated to 8.12.3, for GHSA-xjj6-f33q-929c, GHSA-4qv8-2p9j-2685 and
+  GHSA-f72v-6w45-q472.
+
 ## [0.1.1] - 2026-10-16
 
 ### Fixed

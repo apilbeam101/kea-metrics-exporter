@@ -38,7 +38,7 @@ docker run -d --name kea-metrics-exporter \
   -e KEA_PASSWORD_FILE=/run/secrets/kea-password \
   -v "$PWD/kea-password.txt:/run/secrets/kea-password:ro" \
   -p 10167:10167 \
-  ghcr.io/apilbeam101/kea-metrics-exporter:0.1.1
+  ghcr.io/apilbeam101/kea-metrics-exporter:0.1.2
 ```
 
 ## Build it yourself

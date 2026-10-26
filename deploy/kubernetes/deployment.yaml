@@ -32,7 +32,7 @@ spec:
         - name: kea-metrics-exporter
           # Pin a released tag, never :latest, or point this at your own
           # registry.
-          image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.1
+          image: ghcr.io/apilbeam101/kea-metrics-exporter:0.1.2
           imagePullPolicy: IfNotPresent
           ports:
             - name: metrics
